@@ -85,8 +85,16 @@ class Migrate extends AbstractCommand
         $this->log("Migration table created");
     }
 
-    private function getLastMigrationFile(): string
+    private function getLastMigrationFile(): ?string
     {
+        $mysqli = new MySQLWrapper();
+        $result = $mysqli->query("SELECT filename FROM migrations ORDER BY id DESC LIMIT 1");
+
+        if ($result && $result->num_rows === 0){
+            $rows = $result->fetch_assoc();
+            return $rows['filename'];
+        }
+        return null;
     }
 
     private function getAllMigrations(): array
