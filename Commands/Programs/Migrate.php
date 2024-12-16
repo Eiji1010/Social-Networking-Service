@@ -64,8 +64,37 @@ class Migrate extends AbstractCommand
         $this->log("Migration completed");
     }
 
-    private function rollback(int $rollbackN)
+    private function rollback(int $n=1): void
     {
+        $this->log("Rolling back migration...");
+
+        $lastMigrationFile = $this->getLastMigrationFile();
+        $allMigrationFiles = $this->getAllMigrations('desc');
+
+        $lastMigrationIndex = array_search($lastMigrationFile, $allMigrationFiles);
+        if ($lastMigrationIndex === false){
+            $this->log("No migration to rollback");
+            return;
+        }
+
+        $count = 0;
+        for ($i = $lastMigrationIndex; $n > $count && $i >= 0; $i--){
+            $filename = $allMigrationFiles[$i];
+            include_once ($filename);
+
+            $migrationClassName = $this->getClassNameFromMigrationFile($filename);
+            $migration = new $migrationClassName();
+
+            /* @var string[] $queries */
+            $queries = $migration->down();
+
+            if (empty($queries)) throw new \Exception("Migration File have no queries to rollback @ $filename");
+
+            $this->processQueries($queries);
+            $this->deleteLastMigration($filename);
+
+            $count++;
+        }
     }
 
     private function createMigrationTable()
@@ -131,6 +160,16 @@ class Migrate extends AbstractCommand
         $statement = $mysqli->prepare("INSERT INTO migrations (filename, created_at) VALUES (?, NOW())");
         $statement->bind_param('s', $filename);
         if (!$statement->execute()) throw new \Exception("Failed to insert migration table");
+
+        $statement->close();
+    }
+
+    private function deleteLastMigration(mixed $filename)
+    {
+        $mysqli = new MySQLWrapper();
+        $statement = $mysqli->prepare("DELETE FROM migrations WHERE filename = ?");
+        $statement->bind_param('s', $filename);
+        if (!$statement->execute()) throw new \Exception("Failed to delete migration table");
 
         $statement->close();
     }
