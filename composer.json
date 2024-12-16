@@ -1,6 +1,9 @@
 {
   "autoload": {
     "psr-4": {
+      "Commands\\": "Commands/",
+        "Database\\": "Database/",
+      "Helpers\\": "Helpers/"
     }
   },
   "require": {
