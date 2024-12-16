@@ -70,6 +70,19 @@ class Migrate extends AbstractCommand
 
     private function createMigrationTable()
     {
+        $this->log("Creating migration table");
+        $mysqli = new MySQLWrapper();
+
+        $result = $mysqli->query("
+            CREATE TABLE IF NOT EXISTS migrations (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            filename VARCHAR(255) NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )");
+
+        if ($result === false) throw new \Exception("Failed to create migration table");
+
+        $this->log("Migration table created");
     }
 
     private function getLastMigrationFile(): string
