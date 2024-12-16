@@ -13,8 +13,8 @@ class Migrate extends AbstractCommand
     public static function getArguments(): array
     {
         return [
-            (new Argument('rollback')->description('Rollback the last migration')->allowAsShort(true)->required(false)),
-            (new Argument('init')->description('Create migration table if it does not exist')->allowAsShort(true)->required(false)),
+            (new Argument('rollback'))->description('Rollback the last migration')->allowAsShort(true)->required(false),
+            (new Argument('init'))->description('Create migration table if it does not exist')->allowAsShort(true)->required(false),
         ];
     }
 
