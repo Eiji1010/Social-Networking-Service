@@ -97,12 +97,22 @@ class Migrate extends AbstractCommand
         return null;
     }
 
-    private function getAllMigrations(): array
+    private function getAllMigrations(string $order='asc'): array
     {
+        $directory = sprintf("%s/../../Database/Migrations", __DIR__);
+        $allFiles = glob($directory . '/*.php');
+
+        usort ($allFiles, function($a, $b) use($order){
+            $compareResult = strcmp($a, $b);
+            return $order === 'desc' ? -$compareResult: $compareResult;
+        });
+        return $allFiles;
     }
 
     private function getClassNameFromMigrationFile(string $filename): string
     {
+        if (preg_match("/([^_]+)\.php$/", $filename, $matches)) return sprintf("Database\Migrations\%s", $matches[1]);
+        else throw new \Exception("Unexpected migration file name");
     }
 
     private function processQueries(array $queries)
