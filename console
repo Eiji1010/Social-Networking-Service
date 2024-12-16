@@ -1,0 +1,24 @@
+<?php
+require 'vendor/autoload.php';
+
+$commands = include_once "Commands/registry.php";
+
+$inputCommand = $argv[1];
+
+/** @var Commands\AbstractCommand $commandClass */
+foreach ($commands as $commandClass){
+    $alias = $commandClass::getAlias();
+    if ($alias === $inputCommand){
+        if (in_array("--help", $argv)){
+            fwrite(STDOUT, $commandClass::getHelp());
+            exit(0);
+        }
+        else{
+            $commandClass = new $commandClass();
+            $result = $commandClass->execute();
+            exit($result);
+        }
+    }
+}
+
+fwrite(STDOUT, "Command not found: $inputCommand");
