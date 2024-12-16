@@ -111,7 +111,7 @@ abstract class AbstractCommand implements Command
         return $this->argsMap[$arg];
     }
 
-    private function log(string $info): void
+    protected function log(string $info): void
     {
         fwrite(STDOUT , $info . PHP_EOL);
     }
