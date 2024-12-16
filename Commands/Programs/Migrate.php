@@ -4,6 +4,7 @@ namespace Commands\Programs;
 
 use Commands\AbstractCommand;
 use Commands\Argument;
+use Database\MySQLWrapper;
 
 class Migrate extends AbstractCommand
 {
