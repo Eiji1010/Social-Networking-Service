@@ -117,9 +117,21 @@ class Migrate extends AbstractCommand
 
     private function processQueries(array $queries)
     {
+        $mysqli = new MySQLWrapper();
+
+        foreach ($queries as $query){
+            $result = $mysqli->query($query);
+            if ($result === false) throw new \Exception("Failed to run query: $query");
+        }
     }
 
-    private function insertMigration(string $filename)
+    private function insertMigration(string $filename): void
     {
+        $mysqli = new MySQLWrapper();
+        $statement = $mysqli->prepare("INSERT INTO migrations (filename, created_at) VALUES (?, NOW())");
+        $statement->bind_param('s', $filename);
+        if (!$statement->execute()) throw new \Exception("Failed to insert migration table");
+
+        $statement->close();
     }
 }
