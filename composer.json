@@ -2,10 +2,12 @@
   "autoload": {
     "psr-4": {
       "Commands\\": "Commands/",
-        "Database\\": "Database/",
-      "Helpers\\": "Helpers/"
+      "Database\\": "Database/",
+      "Helpers\\": "Helpers/",
+      "Models\\": "Models/"
     }
   },
   "require": {
+    "ext-mysqli": "*"
   }
 }
