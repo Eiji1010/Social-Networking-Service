@@ -5,6 +5,7 @@ erDiagram
     int id(PK)
     string username
     string password
+    string email
     string introduction
     datetime created_at
     datetime updated_at
