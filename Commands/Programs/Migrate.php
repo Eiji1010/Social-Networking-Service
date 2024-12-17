@@ -21,7 +21,6 @@ class Migrate extends AbstractCommand
     public function execute(): int
     {
         $rollback = $this->getArgumentValue('rollback');
-
         if ($this->getArgumentValue('init')) {
             $this->createMigrationTable();
         }
@@ -31,7 +30,8 @@ class Migrate extends AbstractCommand
             $this->migrate();
         }
         else{
-            $rollbackN = $rollback === true ? 1: (int)$rollback;
+            $rollbackN = $rollback === true ? 1 : (int)$rollback;
+            $this->log("Starting rollback");
             $this->rollback($rollbackN);
         }
         return 0;
@@ -70,7 +70,7 @@ class Migrate extends AbstractCommand
         $this->log("Rolling back migration...");
 
         $lastMigrationFile = $this->getLastMigrationFile();
-        $allMigrationFiles = $this->getAllMigrations('desc');
+        $allMigrationFiles = $this->getAllMigrations();
 
         $lastMigrationIndex = array_search($lastMigrationFile, $allMigrationFiles);
         if ($lastMigrationIndex === false){
@@ -81,6 +81,7 @@ class Migrate extends AbstractCommand
         $count = 0;
         for ($i = $lastMigrationIndex; $n > $count && $i >= 0; $i--){
             $filename = $allMigrationFiles[$i];
+            $this->log("Rolling back: {$filename}");
             include_once ($filename);
 
             $migrationClassName = $this->getClassNameFromMigrationFile($filename);

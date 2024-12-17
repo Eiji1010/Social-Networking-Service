@@ -21,6 +21,8 @@ class CreateCommentTable1 implements SchemaMigration
 
     public function down(): array
     {
-        return[];
+        return[
+            "DROP TABLE comments"
+        ];
     }
 }
