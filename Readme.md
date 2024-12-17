@@ -16,17 +16,17 @@ erDiagram
   }
   Post {
     int id(PK)
-    int userID(FK)
+    int userId(FK)
     string content
     string mediaUrl
     boolean isScheduled
-    datetime scheduledAt
+    datetime scheduled_at
     datetime postDate
   }
   Comment {
     int id(PK)
-    int userID(FK)
-    int postID(FK)
+    int userId(FK)
+    int postId(FK)
     string content
     datetime postDate
   }

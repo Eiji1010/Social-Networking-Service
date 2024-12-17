@@ -120,7 +120,7 @@ class Migrate extends AbstractCommand
         $mysqli = new MySQLWrapper();
         $result = $mysqli->query("SELECT filename FROM migrations ORDER BY id DESC LIMIT 1");
 
-        if ($result && $result->num_rows === 0){
+        if ($result && $result->num_rows > 0){
             $rows = $result->fetch_assoc();
             return $rows['filename'];
         }
@@ -145,7 +145,7 @@ class Migrate extends AbstractCommand
         else throw new \Exception("Unexpected migration file name");
     }
 
-    private function processQueries(array $queries)
+    private function processQueries(array $queries): void
     {
         $mysqli = new MySQLWrapper();
 
@@ -165,7 +165,7 @@ class Migrate extends AbstractCommand
         $statement->close();
     }
 
-    private function deleteLastMigration(mixed $filename)
+    private function deleteLastMigration(mixed $filename): void
     {
         $mysqli = new MySQLWrapper();
         $statement = $mysqli->prepare("DELETE FROM migrations WHERE filename = ?");
