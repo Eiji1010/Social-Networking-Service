@@ -1,6 +1,8 @@
 <?php
 namespace Routing;
 
+use Exception;
+use Helpers\Authenticate;
 use Response\Render\HTMLRenderer;
 use Response\Render\RedirectRenderer;
 
@@ -10,6 +12,11 @@ return [
     }),
 
     'form/login' => Route::create('/form/login', function() {
+        if (!$_SERVER["REQUEST_METHOD"] === 'POST') throw new Exception('Invalid request method: ' . $_SERVER["REQUEST_METHOD"]);
+
+        $email = $_POST['email'] ?? '';
+        $password = $_POST['password'] ?? '';
+        Authenticate::authenticate($email, $password);
         return new RedirectRenderer('login');
     }),
 ];
