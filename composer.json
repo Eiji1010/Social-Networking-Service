@@ -4,7 +4,10 @@
       "Commands\\": "Commands/",
       "Database\\": "Database/",
       "Helpers\\": "Helpers/",
-      "Models\\": "Models/"
+      "Models\\": "Models/",
+      "Response\\": "Response/",
+      "Routing\\": "Routing/",
+      "Views\\": "Views/"
     }
   },
   "require": {
