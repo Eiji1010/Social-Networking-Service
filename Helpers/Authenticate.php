@@ -10,7 +10,7 @@ class Authenticate
     private static ?User $authenticatedUser = null;
     private const USER_ID_SESSION = 'user_id';
 
-    private static function loginAsUser(?User $authenticatedUser): bool
+    public static function loginAsUser(?User $authenticatedUser): bool
     {
         if ($authenticatedUser->getId() === null) throw new \Exception('Cannot login a user with no ID.');
         if (isset($_SESSION[self::USER_ID_SESSION])) throw new \Exception('User is already logged in. Logout before continuing.');
@@ -32,6 +32,17 @@ class Authenticate
             return self::$authenticatedUser;
         } else {
             throw new \Exception('Invalid password.');
+        }
+    }
+
+    public static function logoutUser(): bool
+    {
+        if (isset($_SESSION[self::USER_ID_SESSION])){
+            unset($_SESSION[self::USER_ID_SESSION]);
+            self::$authenticatedUser = null;
+            return true;
+        } else {
+            throw new \Exception('No user to logout.');
         }
     }
 }
