@@ -27,28 +27,28 @@
 <main class="flex flex-col items-center py-10 px-4">
     <h1 class="text-4xl font-bold text-center mb-4">Welcome back to Chirp</h1>
     <p class="text-center mb-6">The best place to share your thoughts with the world. Log in to get started.</p>
-    <form class="w-full max-w-md">
-        <label class="block mb-4">
-            <span class="block text-sm font-medium">Email</span>
-            <input
-                    type="email"
-                    placeholder="Email"
-                    class="form-input w-full h-12 px-4 rounded-lg bg-[#f0f2f5] text-sm"
-                    aria-label="Email"
-            />
-        </label>
-        <label class="block mb-6">
-            <span class="block text-sm font-medium">Password</span>
-            <input
-                    type="password"
-                    placeholder="Password"
-                    class="form-input w-full h-12 px-4 rounded-lg bg-[#f0f2f5] text-sm"
-                    aria-label="Password"
-            />
-        </label>
+    <form class="w-full max-w-md" action="form/login" method="post">
+        <label for="email" class="block mb-2">Email</label>
+        <input
+                type="email"
+                placeholder="Email"
+                class="form-input w-full h-12 px-4 rounded-lg bg-[#f0f2f5] text-sm"
+                aria-label="Email"
+                id="email"
+                name="email"
+        />
+        <label for="password" class="block mb-2 mt-1">Password</label>
+        <input
+                type="password"
+                placeholder="Password"
+                class="form-input w-full h-12 px-4 rounded-lg bg-[#f0f2f5] text-sm"
+                aria-label="Password"
+                id="password"
+                name="password"
+        />
         <button
                 type="submit"
-                class="w-full h-12 bg-[#2094f3] text-white font-bold rounded-lg"
+                class="w-full h-12 bg-[#2094f3] text-white font-bold rounded-lg mt-4"
         >
             Log in
         </button>
