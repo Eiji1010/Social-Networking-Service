@@ -8,11 +8,18 @@ class HTMLRenderer implements HTTPRenderer
 {
     public function getFields(): array
     {
-        // TODO: Implement getFields() method.
+        return [
+            'Content-Type' => 'text/html; charset=utf-8',
+        ];
     }
 
     public function getContent(): string
     {
-        // TODO: Implement getContent() method.
+        $viewPath = $this->getViewPath($this->viewFile);
+    }
+
+    private function getViewPath($viewFile)
+    {
+        return sprintf("%s/%s/Views/%s.php", __DIR__, "../../", $viewFile);
     }
 }
