@@ -31,10 +31,10 @@ class HTMLRenderer implements HTTPRenderer
         ob_get_clean();
         extract($this->data);
         require $viewPath;
-        require $this->getHeader() . ob_get_clean() . $this->getFooter();
+        return $this->getHeader() . ob_get_clean() . $this->getFooter();
     }
 
-    private function getViewPath($viewFile)
+    private function getViewPath($viewFile): string
     {
         return sprintf("%s/%s/Views/%s.php", __DIR__, "../../", $viewFile);
     }
