@@ -40,11 +40,11 @@ class UserDAOImpl implements UserDAO
         return $mysqli->prepareAndFetchAll($query, 'i', [$id])[0] ?? null;
     }
 
-    private function getRawByEmail(int $email): ?array
+    private function getRawByEmail(string $email): ?array
     {
         $mysqli = new MySQLWrapper();
         $query = "SELECT * FROM users WHERE email = ?";
-        return $mysqli->prepareAndFetchAll($query, 'i', [$email])[0] ?? null;
+        return $mysqli->prepareAndFetchAll($query, 's', [$email])[0] ?? null;
     }
 
     private function rawDataToUser(array $rawData): User
