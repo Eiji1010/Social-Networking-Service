@@ -19,4 +19,9 @@ return [
         Authenticate::authenticate($email, $password);
         return new RedirectRenderer('login');
     }),
+
+    'logout' => Route::create('logout', function() {
+        Authenticate::logoutUser();
+        return new RedirectRenderer('login');
+    }),
 ];

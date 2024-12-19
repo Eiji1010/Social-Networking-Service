@@ -34,4 +34,15 @@ class Authenticate
             throw new \Exception('Invalid password.');
         }
     }
+
+    public static function logoutUser(): bool
+    {
+        if (isset($_SESSION[self::USER_ID_SESSION])){
+            unset($_SESSION[self::USER_ID_SESSION]);
+            self::$authenticatedUser = null;
+            return true;
+        } else {
+            throw new \Exception('No user to logout.');
+        }
+    }
 }
