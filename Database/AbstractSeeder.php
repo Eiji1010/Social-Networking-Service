@@ -20,9 +20,9 @@ abstract class AbstractSeeder implements Seeder
     {
         $this->conn = $conn;
     }
-    public function seed(): void
+    public function seed(int $count=1): void
     {
-        $data = $this->createRowData();
+        $data = $this->createRowData($count);
 
         if ($this->tableName === null) throw new \Exception("Table name not set");
         if (empty($this->tableColumns)) throw new \Exception("Table columns not set");
@@ -38,6 +38,7 @@ abstract class AbstractSeeder implements Seeder
         if (count($row) !== count($this->tableColumns)) throw new \Exception("Column count mismatch");
 
             foreach ($row as $i => $value) {
+
                 $columnDataType = $this->tableColumns[$i]['data_type'];
                 $columnName = $this->tableColumns[$i]['column_name'];
 
@@ -46,7 +47,7 @@ abstract class AbstractSeeder implements Seeder
             }
     }
 
-    private function insertRow(mixed $row)
+    private function insertRow(array $row): void
     {
         $columnNames = array_map(function($columnInfo){ return $columnInfo['column_name'];}, $this->tableColumns);
 
@@ -62,7 +63,8 @@ abstract class AbstractSeeder implements Seeder
         $stmt = $this->conn->prepare($sql);
 
         $dataTypes = implode(array_map(function($columnInfo){ return static::AVAILABLE_TYPES[$columnInfo['data_type']];}, $this->tableColumns));
-        $stmt->bind_param($dataTypes, ...$row);
+        $values = array_values($row);
+        $stmt->bind_param($dataTypes, ...$values);
         $stmt->execute();
     }
 }
