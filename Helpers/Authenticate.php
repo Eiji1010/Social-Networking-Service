@@ -45,4 +45,15 @@ class Authenticate
             throw new \Exception('No user to logout.');
         }
     }
+
+    public static function getAuthenticatedUser(): ?User
+    {
+        if (self::$authenticatedUser === null) {
+            $userDao = DAOFactory::getUserDAO();
+            $userId = $_SESSION[self::USER_ID_SESSION] ?? null;
+            self::$authenticatedUser = $userDao->getById($userId);
+        }
+
+        return self::$authenticatedUser;
+    }
 }
