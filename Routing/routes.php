@@ -54,5 +54,9 @@ return [
 
     'homepage' => Route::create('homepage', function(){
         return new HTMLRenderer('page/homepage', []);
+    }),
+
+    'profile' => Route::create('profile', function(){
+        return new HTMLRenderer('page/profile', []);
     })
 ];
