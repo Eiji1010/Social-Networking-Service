@@ -75,4 +75,22 @@ class UserDAOImpl implements UserDAO
     {
         return $this->getRawById($id)['password'] ?? null;
     }
+
+    public function updateProfile(array $data): bool
+    {
+        $mysqli = new MySQLWrapper();
+        $query = "UPDATE users SET username = ?, handle = ?, age = ?, place = ?, biography = ? WHERE id = ?";
+        return $mysqli->prepareAndExecute(
+            $query,
+            'ssisss',
+            [
+                $data['username'] ?? '',
+                $data['handle'] ?? '',
+                $data['age'] ?? null,
+                $data['place'] ?? '',
+                $data['bio'] ?? '',
+                $data['id'] ??  null
+            ]
+        );
+    }
 }
