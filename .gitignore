@@ -1,3 +1,6 @@
 .idea/
 .env
 vendor/
+
+Views/page/homepage.html
+Views/page/profile.html

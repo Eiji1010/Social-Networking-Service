@@ -19,7 +19,7 @@ return [
         $email = $_POST['email'] ?? '';
         $password = $_POST['password'] ?? '';
         Authenticate::authenticate($email, $password);
-        return new RedirectRenderer('login');
+        return new RedirectRenderer('homepage');
     }),
 
     'logout' => Route::create('logout', function() {
@@ -50,5 +50,44 @@ return [
         Authenticate::loginAsUser($user);
         error_log('User created: ' . json_encode($user));
         return new RedirectRenderer('login');
+    }),
+
+    'homepage' => Route::create('homepage', function(){
+        return new HTMLRenderer('page/homepage', []);
+    }),
+
+    'profile' => Route::create('profile', function(){
+        return new HTMLRenderer('page/profile', []);
+    }),
+
+    'form/edit-profile' => Route::create('/form/edit-profile', function() {
+        if (!$_SERVER["REQUEST_METHOD"] === "POST") throw new Exception('Invalid request method: ' . $_SERVER["REQUEST_METHOD"]);
+
+        $user = Authenticate::getAuthenticatedUser();
+
+        error_log('SERVER: ' . json_encode($_POST));
+
+        $username = $_POST['username'] ?? '';
+        $handle = $_POST['handle'] ?? '';
+        $age = $_POST['age'] ?? '';
+        $place = $_POST['place'] ?? '';
+        $bio = $_POST['biography'] ?? '';
+
+        $data = [
+            'username' => $username,
+            'handle' => $handle,
+            'age' => $age,
+            'place' => $place,
+            'bio' => $bio,
+            'id' => $user->getId(),
+        ];
+
+        error_log('Data: ' . json_encode($data));
+
+        $userDao = DAOFactory::getUserDAO();
+        $success = $userDao->updateProfile($data);
+        if(!$success) throw new Exception('Failed to update profile.');
+
+        return new RedirectRenderer('homepage');
     })
 ];

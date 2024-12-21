@@ -53,7 +53,11 @@ class UserDAOImpl implements UserDAO
             username: $rawData['username'],
             email: $rawData['email'],
             id: $rawData['id'],
-            timeStamp: new DateTimeStamp($rawData['created_at'], $rawData['updated_at'])
+            timeStamp: new DateTimeStamp($rawData['created_at'], $rawData['updated_at']),
+            place: $rawData['place'],
+            age: $rawData['age'],
+            handle: $rawData['handle'],
+            biography: $rawData['biography']
         );
     }
 
@@ -74,5 +78,23 @@ class UserDAOImpl implements UserDAO
     public function getHashedPasswordById(int $id): ?string
     {
         return $this->getRawById($id)['password'] ?? null;
+    }
+
+    public function updateProfile(array $data): bool
+    {
+        $mysqli = new MySQLWrapper();
+        $query = "UPDATE users SET username = ?, handle = ?, age = ?, place = ?, biography = ? WHERE id = ?";
+        return $mysqli->prepareAndExecute(
+            $query,
+            'ssisss',
+            [
+                $data['username'] ?? '',
+                $data['handle'] ?? '',
+                $data['age'] ?? null,
+                $data['place'] ?? '',
+                $data['bio'] ?? '',
+                $data['id'] ??  null
+            ]
+        );
     }
 }
