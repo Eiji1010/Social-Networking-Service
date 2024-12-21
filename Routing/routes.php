@@ -19,7 +19,7 @@ return [
         $email = $_POST['email'] ?? '';
         $password = $_POST['password'] ?? '';
         Authenticate::authenticate($email, $password);
-        return new RedirectRenderer('login');
+        return new RedirectRenderer('homepage');
     }),
 
     'logout' => Route::create('logout', function() {
@@ -50,5 +50,9 @@ return [
         Authenticate::loginAsUser($user);
         error_log('User created: ' . json_encode($user));
         return new RedirectRenderer('login');
+    }),
+
+    'homepage' => Route::create('homepage', function(){
+        return new HTMLRenderer('page/homepage', []);
     })
 ];
