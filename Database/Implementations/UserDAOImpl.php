@@ -53,7 +53,11 @@ class UserDAOImpl implements UserDAO
             username: $rawData['username'],
             email: $rawData['email'],
             id: $rawData['id'],
-            timeStamp: new DateTimeStamp($rawData['created_at'], $rawData['updated_at'])
+            timeStamp: new DateTimeStamp($rawData['created_at'], $rawData['updated_at']),
+            place: $rawData['place'],
+            age: $rawData['age'],
+            handle: $rawData['handle'],
+            biography: $rawData['biography']
         );
     }
 
