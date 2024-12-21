@@ -1,3 +1,6 @@
+<?php
+    $user = \Helpers\Authenticate::getAuthenticatedUser();
+?>
 <!-- サイドバー -->
 <nav class="bg-[#f0f2f5] w-80 p-4 flex flex-col gap-4 fixed h-full">
     <div class="space-y-2">
@@ -104,8 +107,8 @@
         </div>
         <!-- ユーザー情報 -->
         <div class="mt-4 px-4">
-            <h2 class="text-xl font-bold">John Doe</h2>
-            <p class="text-sm text-gray-500">@johndoe</p>
-            <p class="mt-2 text-sm text-gray-700">Short bio about the user.</p>
+            <h2 class="text-xl font-bold"><?= $user->getUsername() ?></h2>
+            <p class="text-sm text-gray-500">@<?= $user->getHandle() ?></p>
+            <p class="mt-2 text-sm text-gray-700"><?= $user->getBiography() ?></p>
         </div>
     </section>
