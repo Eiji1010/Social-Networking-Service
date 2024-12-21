@@ -3,7 +3,7 @@
     <nav class="bg-[#f0f2f5] w-80 p-4 flex flex-col gap-4 fixed h-full">
         <div class="space-y-2">
             <a
-                href="#"
+                href="homepage"
                 class="flex items-center gap-3 px-3 py-2 bg-white rounded-lg hover:bg-gray-200 transition"
             >
                 <svg
@@ -61,7 +61,7 @@
                 <span class="text-sm font-medium">Message</span>
             </a>
             <a
-                href="#"
+                href="/profile"
                 class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-200 transition"
             >
                 <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
