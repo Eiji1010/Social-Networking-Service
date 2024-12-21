@@ -14,6 +14,8 @@ class User implements Model
         private string $email,
         private ?int $id = null,
         private ?DateTimeStamp $timeStamp = null,
+        private ?string $place = null,
+        private ?int $age = null,
     ){}
 
     public function getId(): ?int {
