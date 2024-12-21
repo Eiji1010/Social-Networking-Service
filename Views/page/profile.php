@@ -91,7 +91,7 @@
             <div>
                 <div
                     class="w-32 h-32 rounded-full bg-center bg-cover border-4 border-white"
-                    style="background-image: url('https://cdn.usegalileo.ai/sdxl10/1921ee83-ca0a-4f15-b131-55e10df2ea8f.png');"
+                    style="background-image: url('#');"
                 ></div>
             </div>
             <!-- Edit Profile ボタン -->
