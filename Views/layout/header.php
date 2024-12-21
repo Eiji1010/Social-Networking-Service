@@ -10,6 +10,7 @@
     />
     <link rel="icon" type="image/png" href="favicon.png" />
     <title>Chirp</title>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="/js/app.js"></script>
 </head>
 <body class="bg-white font-sans text-[#111518] min-h-screen flex flex-col">
