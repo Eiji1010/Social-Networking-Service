@@ -1,7 +1,7 @@
 <?php
 namespace Helpers;
 
-use Type\ValueType;
+use Types\ValueType;
 
 class ValidationHelper
 {
