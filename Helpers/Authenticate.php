@@ -58,4 +58,10 @@ class Authenticate
         $userDao = DAOFactory::getUserDAO();
         self::$authenticatedUser = $userDao->getById($_SESSION[self::USER_ID_SESSION]);
     }
+
+    public static function isLoggedIn(): bool
+    {
+        self::retrieveAuthenticatedUser();
+        return self::$authenticatedUser !== null;
+    }
 }
