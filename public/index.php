@@ -21,7 +21,12 @@ if (isset($routes[$path])){
             throw new Exception("Invalid route handler.");
         }
 
-        $renderer = $route->getCallback()();
+        $middlewareRegister = include('Middleware/middleware-register.php');
+        $middlewares = array_merge($middlewareRegister['global'], array_map(fn ($routeAlias) => $middlewareRegister['aliases'][$routeAlias], $route->getMiddleware()));
+        $middlewareHandler = new \Middleware\MiddlewareHandler(array_map(fn($middlewareClass) => new $middlewareClass(), $middlewares));
+
+        $renderer = $middlewareHandler->run($route->getCallback());
+
         foreach ($renderer->getFields() as $name=>$value){
             $sanitized_value = filter_var($value, FILTER_SANITIZE_SPECIAL_CHARS);
             if ($sanitized_value  && $sanitized_value === $value){
