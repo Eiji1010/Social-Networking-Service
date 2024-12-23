@@ -6,6 +6,7 @@ use Exception;
 use Helpers\Authenticate;
 use Helpers\ValidationHelper;
 use Models\User;
+use Response\FlashData;
 use Response\Render\HTMLRenderer;
 use Response\Render\RedirectRenderer;
 use Types\ValueType;
@@ -16,16 +17,23 @@ return [
     }),
 
     'form/login' => Route::create('/form/login', function() {
-        if (!$_SERVER["REQUEST_METHOD"] === 'POST') throw new Exception('Invalid request method: ' . $_SERVER["REQUEST_METHOD"]);
+        try{
+            if (!$_SERVER["REQUEST_METHOD"] === 'POST') throw new Exception('Invalid request method: ' . $_SERVER["REQUEST_METHOD"]);
 
-        $required_fields = [
-            'email' => ValueType::EMAIL,
-            'password' => ValueType::PASSWORD
-        ];
+            $required_fields = [
+                'email' => ValueType::EMAIL,
+                'password' => ValueType::PASSWORD
+            ];
 
-        $validatedData = ValidationHelper::validateFields($required_fields, $_POST);
-        Authenticate::authenticate($validatedData['email'], $validatedData['password']);
-        return new RedirectRenderer('homepage');
+            $validatedData = ValidationHelper::validateFields($required_fields, $_POST);
+            Authenticate::authenticate($validatedData['email'], $validatedData['password']);
+            return new RedirectRenderer('homepage');
+        }
+        catch (Exception $e){
+            FlashData::setFlashData('error', 'Invalid email or password.');
+            return new HTMLRenderer('login', ['error' => $e->getMessage()]);
+        }
+
     }),
 
     'logout' => Route::create('logout', function() {
