@@ -48,12 +48,14 @@ class Authenticate
 
     public static function getAuthenticatedUser(): ?User
     {
-        if (self::$authenticatedUser === null) {
-            $userDao = DAOFactory::getUserDAO();
-            $userId = $_SESSION[self::USER_ID_SESSION] ?? null;
-            self::$authenticatedUser = $userDao->getById($userId);
-        }
-
+        self::retrieveAuthenticatedUser();
         return self::$authenticatedUser;
+    }
+
+    private static function retrieveAuthenticatedUser(): void
+    {
+        if (!isset($_SESSION[self::USER_ID_SESSION])) return;
+        $userDao = DAOFactory::getUserDAO();
+        self::$authenticatedUser = $userDao->getById($_SESSION[self::USER_ID_SESSION]);
     }
 }
