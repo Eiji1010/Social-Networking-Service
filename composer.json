@@ -5,6 +5,7 @@
       "Database\\": "Database/",
       "Helpers\\": "Helpers/",
       "Models\\": "Models/",
+      "Middleware\\": "Middleware/",
       "Response\\": "Response/",
       "Routing\\": "Routing/",
       "Types\\": "Types/",

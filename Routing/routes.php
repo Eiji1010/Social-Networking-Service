@@ -14,7 +14,7 @@ use Types\ValueType;
 return [
     'login' => Route::create('login', function() {
         return new HTMLRenderer('page/login', []);
-    }),
+    })->setMiddleware(['guest']),
 
     'form/login' => Route::create('/form/login', function() {
         try{
@@ -34,8 +34,7 @@ return [
             FlashData::setFlashData('error', 'Invalid email or password.');
             return new RedirectRenderer('login');
         }
-
-    }),
+    })->setMiddleware(['guest']),
 
     'logout' => Route::create('logout', function() {
         Authenticate::logoutUser();
