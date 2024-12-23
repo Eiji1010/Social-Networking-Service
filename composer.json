@@ -5,12 +5,15 @@
       "Database\\": "Database/",
       "Helpers\\": "Helpers/",
       "Models\\": "Models/",
+      "Middleware\\": "Middleware/",
       "Response\\": "Response/",
       "Routing\\": "Routing/",
+      "Types\\": "Types/",
       "Views\\": "Views/"
     }
   },
   "require": {
-    "ext-mysqli": "*"
+    "ext-mysqli": "*",
+    "fakerphp/faker": "^1.24"
   }
 }

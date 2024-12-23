@@ -4,23 +4,37 @@ namespace Routing;
 use Database\DAOFactory;
 use Exception;
 use Helpers\Authenticate;
+use Helpers\ValidationHelper;
 use Models\User;
+use Response\FlashData;
 use Response\Render\HTMLRenderer;
 use Response\Render\RedirectRenderer;
+use Types\ValueType;
 
 return [
     'login' => Route::create('login', function() {
         return new HTMLRenderer('page/login', []);
-    }),
+    })->setMiddleware(['guest']),
 
     'form/login' => Route::create('/form/login', function() {
-        if (!$_SERVER["REQUEST_METHOD"] === 'POST') throw new Exception('Invalid request method: ' . $_SERVER["REQUEST_METHOD"]);
+        try{
+            if (!$_SERVER["REQUEST_METHOD"] === 'POST') throw new Exception('Invalid request method: ' . $_SERVER["REQUEST_METHOD"]);
 
-        $email = $_POST['email'] ?? '';
-        $password = $_POST['password'] ?? '';
-        Authenticate::authenticate($email, $password);
-        return new RedirectRenderer('homepage');
-    }),
+            $required_fields = [
+                'email' => ValueType::EMAIL,
+                'password' => ValueType::PASSWORD
+            ];
+
+            $validatedData = ValidationHelper::validateFields($required_fields, $_POST);
+            Authenticate::authenticate($validatedData['email'], $validatedData['password']);
+            FlashData::setFlashData('success', 'Successfully logged in.');
+            return new RedirectRenderer('homepage');
+        }
+        catch (Exception $e){
+            FlashData::setFlashData('error', 'Invalid email or password.');
+            return new RedirectRenderer('login');
+        }
+    })->setMiddleware(['guest']),
 
     'logout' => Route::create('logout', function() {
         Authenticate::logoutUser();
@@ -32,24 +46,39 @@ return [
     }),
 
     'form/register' => Route::create('/form/register', function (){
-        if (!$_SERVER["REQUEST_METHOD"] === 'POST') throw new Exception('Invalid request method: ' . $_SERVER["REQUEST_METHOD"]);
+        try{
+            if (!$_SERVER["REQUEST_METHOD"] === 'POST') throw new Exception('Invalid request method: ' . $_SERVER["REQUEST_METHOD"]);
 
-        $username = $_POST['username'] ?? '';
-        $email = $_POST['email'] ?? '';
-        $password = $_POST['password'] ?? '';
-        $passwordConfirmation = $_POST['confirm-password'] ?? '';
+            $required_fields = [
+                'username' => ValueType::STRING,
+                'email' => ValueType::EMAIL,
+                'password' => ValueType::PASSWORD,
+                'confirm-password' => ValueType::PASSWORD
+            ];
 
-        if($password !== $passwordConfirmation) throw new Exception('Password and password confirmation do not match.');
+            $validatedData = ValidationHelper::validateFields($required_fields, $_POST);
 
-        $userDao = DAOFactory::getUserDAO();
-        $user = new User(username: $username, email: $email);
+            $username = $validatedData['username'];
+            $email = $validatedData['email'];
+            $password = $validatedData['password'];
+            $passwordConfirmation = $validatedData['confirm-password'];
 
-        $success = $userDao->create($user, $password);
-        if(!$success) throw new Exception('Failed to create user.');
+            if($password !== $passwordConfirmation) throw new Exception('Password and password confirmation do not match.');
 
-        Authenticate::loginAsUser($user);
-        error_log('User created: ' . json_encode($user));
-        return new RedirectRenderer('login');
+            $userDao = DAOFactory::getUserDAO();
+            $user = new User(username: $username, email: $email);
+
+            $success = $userDao->create($user, $password);
+            if(!$success) throw new Exception('Failed to create user.');
+
+            Authenticate::loginAsUser($user);
+            FlashData::setFlashData('success', 'Successfully registered and logged in.');
+            return new RedirectRenderer('login');
+        }
+        catch (Exception $e){
+            FlashData::setFlashData('error', $e->getMessage());
+            return new RedirectRenderer('register');
+        }
     }),
 
     'homepage' => Route::create('homepage', function(){
@@ -61,33 +90,47 @@ return [
     }),
 
     'form/edit-profile' => Route::create('/form/edit-profile', function() {
-        if (!$_SERVER["REQUEST_METHOD"] === "POST") throw new Exception('Invalid request method: ' . $_SERVER["REQUEST_METHOD"]);
+        try{
+            if (!$_SERVER["REQUEST_METHOD"] === "POST") throw new Exception('Invalid request method: ' . $_SERVER["REQUEST_METHOD"]);
 
-        $user = Authenticate::getAuthenticatedUser();
+            $user = Authenticate::getAuthenticatedUser();
 
-        error_log('SERVER: ' . json_encode($_POST));
+            $required_fields = [
+                'username' => ValueType::STRING,
+                'handle' => ValueType::STRING,
+                'age' => ValueType::INT,
+                'place' => ValueType::STRING,
+                'biography' => ValueType::STRING
+            ];
 
-        $username = $_POST['username'] ?? '';
-        $handle = $_POST['handle'] ?? '';
-        $age = $_POST['age'] ?? '';
-        $place = $_POST['place'] ?? '';
-        $bio = $_POST['biography'] ?? '';
+            $validatedData = ValidationHelper::validateFields($required_fields, $_POST);
 
-        $data = [
-            'username' => $username,
-            'handle' => $handle,
-            'age' => $age,
-            'place' => $place,
-            'bio' => $bio,
-            'id' => $user->getId(),
-        ];
+            $username = $validatedData['username'];
+            $handle = $validatedData['handle'];
+            $age = $validatedData['age'];
+            $place = $validatedData['place'];
+            $bio = $validatedData['biography'];
 
-        error_log('Data: ' . json_encode($data));
+            $data = [
+                'username' => $username,
+                'handle' => $handle,
+                'age' => $age,
+                'place' => $place,
+                'bio' => $bio,
+                'id' => $user->getId(),
+            ];
 
-        $userDao = DAOFactory::getUserDAO();
-        $success = $userDao->updateProfile($data);
-        if(!$success) throw new Exception('Failed to update profile.');
+            error_log('Data: ' . json_encode($data));
 
-        return new RedirectRenderer('homepage');
+            $userDao = DAOFactory::getUserDAO();
+            $success = $userDao->updateProfile($data);
+            if(!$success) throw new Exception('Failed to update profile.');
+
+            return new RedirectRenderer('homepage');
+        }
+        catch (Exception $e){
+            FlashData::setFlashData('error', $e->getMessage());
+            return new RedirectRenderer('profile');
+        }
     })
 ];

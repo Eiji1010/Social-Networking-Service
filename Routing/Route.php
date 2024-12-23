@@ -5,6 +5,7 @@ use Closure;
 class Route
 {
     private string $path;
+    private array $middleware;
     private Closure $callback;
 
     public function __construct(string $path, Closure $callback)
@@ -18,8 +19,19 @@ class Route
         return new self($path, $callback);
     }
 
-    public function getCallback()
+    public function getCallback(): Closure
     {
         return $this->callback;
+    }
+
+    public function setMiddleware(array $middleware): Route
+    {
+        $this->middleware = $middleware;
+        return $this;
+    }
+
+    public function getMiddleware(): array
+    {
+        return $this->middleware ?? [];
     }
 }

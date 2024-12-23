@@ -2,6 +2,7 @@
 
 namespace Response\Render;
 
+use Helpers\Authenticate;
 use Response\HTTPRenderer;
 
 class HTMLRenderer implements HTTPRenderer
@@ -23,12 +24,13 @@ class HTMLRenderer implements HTTPRenderer
 
     public function getContent(): string
     {
+        $user = Authenticate::getAuthenticatedUser();
         $viewPath = $this->getViewPath($this->viewFile);
         if(!file_exists($viewPath)){
             throw new \Exception("View file not found: " . $viewPath);
         }
 
-        ob_get_clean();
+        ob_start();
         extract($this->data);
         require $viewPath;
         return $this->getHeader() . ob_get_clean() . $this->getFooter();
@@ -43,6 +45,7 @@ class HTMLRenderer implements HTTPRenderer
     {
         ob_start();
         require $this->getViewPath("layout/header");
+        require $this->getViewPath("component/message-boxes");
         return ob_get_clean();
     }
 
