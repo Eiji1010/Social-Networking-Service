@@ -1,7 +1,3 @@
-<?php
-$user = \Helpers\Authenticate::getAuthenticatedUser();
-?>
-
 <div class="flex min-h-screen">
     <!-- サイドバー -->
     <nav class="bg-[#f0f2f5] w-80 p-4 flex flex-col gap-4 fixed h-full">
