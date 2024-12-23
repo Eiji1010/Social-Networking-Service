@@ -4,9 +4,11 @@ namespace Routing;
 use Database\DAOFactory;
 use Exception;
 use Helpers\Authenticate;
+use Helpers\ValidationHelper;
 use Models\User;
 use Response\Render\HTMLRenderer;
 use Response\Render\RedirectRenderer;
+use Types\ValueType;
 
 return [
     'login' => Route::create('login', function() {
@@ -16,9 +18,13 @@ return [
     'form/login' => Route::create('/form/login', function() {
         if (!$_SERVER["REQUEST_METHOD"] === 'POST') throw new Exception('Invalid request method: ' . $_SERVER["REQUEST_METHOD"]);
 
-        $email = $_POST['email'] ?? '';
-        $password = $_POST['password'] ?? '';
-        Authenticate::authenticate($email, $password);
+        $required_fields = [
+            'email' => ValueType::EMAIL,
+            'password' => ValueType::PASSWORD
+        ];
+
+        $validatedData = ValidationHelper::validateFields($required_fields, $_POST);
+        Authenticate::authenticate($validatedData['email'], $validatedData['password']);
         return new RedirectRenderer('homepage');
     }),
 
@@ -34,10 +40,19 @@ return [
     'form/register' => Route::create('/form/register', function (){
         if (!$_SERVER["REQUEST_METHOD"] === 'POST') throw new Exception('Invalid request method: ' . $_SERVER["REQUEST_METHOD"]);
 
-        $username = $_POST['username'] ?? '';
-        $email = $_POST['email'] ?? '';
-        $password = $_POST['password'] ?? '';
-        $passwordConfirmation = $_POST['confirm-password'] ?? '';
+        $required_fields = [
+            'username' => ValueType::STRING,
+            'email' => ValueType::EMAIL,
+            'password' => ValueType::PASSWORD,
+            'confirm-password' => ValueType::PASSWORD
+        ];
+
+        $validatedData = ValidationHelper::validateFields($required_fields, $_POST);
+
+        $username = $validatedData['username'];
+        $email = $validatedData['email'];
+        $password = $validatedData['password'];
+        $passwordConfirmation = $validatedData['confirm-password'];
 
         if($password !== $passwordConfirmation) throw new Exception('Password and password confirmation do not match.');
 
@@ -65,13 +80,19 @@ return [
 
         $user = Authenticate::getAuthenticatedUser();
 
-        error_log('SERVER: ' . json_encode($_POST));
+        $required_fields = [
+            'username' => ValueType::STRING,
+            'handle' => ValueType::STRING,
+            'age' => ValueType::INT,
+            'place' => ValueType::STRING,
+            'biography' => ValueType::STRING
+        ];
 
-        $username = $_POST['username'] ?? '';
-        $handle = $_POST['handle'] ?? '';
-        $age = $_POST['age'] ?? '';
-        $place = $_POST['place'] ?? '';
-        $bio = $_POST['biography'] ?? '';
+        $username = $required_fields['username'];
+        $handle = $required_fields['handle'];
+        $age = $required_fields['age'];
+        $place = $required_fields['place'];
+        $bio = $required_fields['biography'];
 
         $data = [
             'username' => $username,
