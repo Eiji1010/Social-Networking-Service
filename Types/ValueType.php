@@ -1,5 +1,5 @@
 <?php
-namespace Type;
+namespace Types;
 
 enum ValueType: string
 {
