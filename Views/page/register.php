@@ -7,6 +7,7 @@
     <div class="w-full max-w-md">
         <h2 class="text-[28px] font-bold leading-tight mb-5">Create an account</h2>
         <form action="form/register" method="post" class="space-y-6">
+            <input type="hidden" name="csrf_token" value=<?= Helpers\CrossSiteForgeryProtection::getToken(); ?>>
             <div>
                 <label class="block text-sm font-medium mb-2" for="username">Username</label>
                 <input
@@ -75,6 +76,6 @@
             </button>
         </form>
         <p class="mt-4 text-sm text-center">
-            Already have an account? <a href="#" class="underline">Log in</a>.
+            Already have an account? <a href="login" class="underline">Log in</a>.
         </p>
     </div>

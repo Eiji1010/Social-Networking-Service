@@ -9,15 +9,10 @@
         <h2 class="text-lg font-bold">Chirp</h2>
     </div>
     <div class="flex items-center gap-4">
-        <input
-                type="text"
-                placeholder="Search"
-                class="form-input w-64 h-10 px-4 bg-[#f0f2f5] text-sm rounded-lg"
-                aria-label="Search"
-        />
         <button
                 class="h-10 px-4 bg-[#2094f3] text-white text-sm font-bold rounded-lg"
                 aria-label="Sign up"
+                onclick="location.href='register'"
         >
             Sign up
         </button>
@@ -28,6 +23,7 @@
     <h1 class="text-4xl font-bold text-center mb-4">Welcome back to Chirp</h1>
     <p class="text-center mb-6">The best place to share your thoughts with the world. Log in to get started.</p>
     <form class="w-full max-w-md" action="form/login" method="post">
+        <input type="hidden" name="csrf_token" value=<?= Helpers\CrossSiteForgeryProtection::getToken(); ?>>
         <label for="email" class="block mb-2">Email</label>
         <input
                 type="email"
@@ -57,5 +53,5 @@
         <a href="#" class="underline">Forgot your password?</a>
     </p>
     <p class="mt-2 text-sm text-center">
-        New to Chirp? <a href="#" class="underline">Sign up now.</a>
+        New to Chirp? <a href="register" class="underline">Sign up now.</a>
     </p>
