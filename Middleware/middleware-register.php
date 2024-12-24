@@ -6,5 +6,6 @@ return [
     ],
     'aliases' => [
         'guest' => \Middleware\GuestMiddleware::class,
+        'auth' => \Middleware\AuthenticatedMiddleware::class,
     ]
 ];
