@@ -122,6 +122,7 @@
             <h2 class="text-xl font-bold mb-4">Edit Profile</h2>
             <form action="form/edit-profile" method="post">
                 <div class="mb-4">
+                    <input type="hidden" name="csrf_token" value=<?= \Helpers\CrossSiteForgeryProtection::getToken(); ?>
                     <label for="username" class="block text-sm font-medium">Name</label>
                     <input
                             id="username"
@@ -194,3 +195,4 @@
             </form>
         </div>
     </div>
+</main>
