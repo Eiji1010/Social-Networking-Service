@@ -28,6 +28,7 @@
     <h1 class="text-4xl font-bold text-center mb-4">Welcome back to Chirp</h1>
     <p class="text-center mb-6">The best place to share your thoughts with the world. Log in to get started.</p>
     <form class="w-full max-w-md" action="form/login" method="post">
+        <input type="hidden" name="csrf_token" value=<?= Helpers\CrossSiteForgeryProtection::getToken(); ?>>
         <label for="email" class="block mb-2">Email</label>
         <input
                 type="email"
