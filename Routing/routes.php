@@ -43,7 +43,7 @@ return [
 
     'register' => Route::create('register', function() {
         return new HTMLRenderer('page/register', []);
-    }),
+    })->setMiddleware(['guest']),
 
     'form/register' => Route::create('/form/register', function (){
         try{
@@ -79,15 +79,15 @@ return [
             FlashData::setFlashData('error', $e->getMessage());
             return new RedirectRenderer('register');
         }
-    }),
+    })->setMiddleware(['guest']),
 
     'homepage' => Route::create('homepage', function(){
         return new HTMLRenderer('page/homepage', []);
-    }),
+    })->setMiddleware(['auth']),
 
     'profile' => Route::create('profile', function(){
         return new HTMLRenderer('page/profile', []);
-    }),
+    })->setMiddleware(['auth']),
 
     'form/edit-profile' => Route::create('/form/edit-profile', function() {
         try{
@@ -132,5 +132,5 @@ return [
             FlashData::setFlashData('error', $e->getMessage());
             return new RedirectRenderer('profile');
         }
-    })
+    })->setMiddleware(['auth']),
 ];
