@@ -76,6 +76,6 @@
             </button>
         </form>
         <p class="mt-4 text-sm text-center">
-            Already have an account? <a href="#" class="underline">Log in</a>.
+            Already have an account? <a href="login" class="underline">Log in</a>.
         </p>
     </div>

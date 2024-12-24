@@ -46,6 +46,9 @@ class HTMLRenderer implements HTTPRenderer
         ob_start();
         require $this->getViewPath("layout/header");
         require $this->getViewPath("component/message-boxes");
+        if (Authenticate::isLoggedIn()) {
+            require $this->getViewPath("component/navigator");
+        }
         return ob_get_clean();
     }
 
