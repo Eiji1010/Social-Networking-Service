@@ -9,15 +9,10 @@
         <h2 class="text-lg font-bold">Chirp</h2>
     </div>
     <div class="flex items-center gap-4">
-        <input
-                type="text"
-                placeholder="Search"
-                class="form-input w-64 h-10 px-4 bg-[#f0f2f5] text-sm rounded-lg"
-                aria-label="Search"
-        />
         <button
                 class="h-10 px-4 bg-[#2094f3] text-white text-sm font-bold rounded-lg"
                 aria-label="Sign up"
+                onclick="location.href='register'"
         >
             Sign up
         </button>
@@ -58,5 +53,5 @@
         <a href="#" class="underline">Forgot your password?</a>
     </p>
     <p class="mt-2 text-sm text-center">
-        New to Chirp? <a href="#" class="underline">Sign up now.</a>
+        New to Chirp? <a href="register" class="underline">Sign up now.</a>
     </p>
