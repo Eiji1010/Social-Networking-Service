@@ -3,6 +3,7 @@
 namespace Database\Seeds;
 
 use Database\AbstractSeeder;
+use Database\DAOFactory;
 use Faker\Factory;
 
 class MessageSeeder extends AbstractSeeder
@@ -19,7 +20,7 @@ class MessageSeeder extends AbstractSeeder
             'column_name' => 'senderId'
         ],
         'receiverId' => [
-            'data_type' => 'int',
+            'data_type' => '?int',
             'column_name' => 'receiverId'
         ],
         'created_at' => [
@@ -30,13 +31,22 @@ class MessageSeeder extends AbstractSeeder
 
     public function createRowData(int $num=1): array
     {
+        $userDao = DAOFactory::getUserDAO();
+        $users = $userDao->getAll();
+        $ids = [];
+        foreach ($users as $user){
+            $ids[] = $user->getId();
+        }
+        $senderIds = $ids;
+        $receiverIds = $ids + [null];
+
         $data = [];
         $faker = Factory::create();
         for ($i = 0; $i < $num; $i++){
             $data[] = [
                 'content' => $faker->text,
-                'senderId' => $faker->numberBetween(1, 10),
-                'receiverId' => $faker->numberBetween(1, 10),
+                'senderId' => $faker->randomElement($senderIds),
+                'receiverId' => $faker->randomElement($receiverIds),
                 'created_at' => $faker->dateTimeThisYear->format('Y-m-d H:i:s')
             ];
         }
