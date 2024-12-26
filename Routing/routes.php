@@ -133,4 +133,9 @@ return [
             return new RedirectRenderer('profile');
         }
     })->setMiddleware(['auth']),
+
+    "form/post" => Route::create("/form/post", function(){
+        error_log(json_encode($_POST['post']));
+        return new RedirectRenderer('homepage');
+    })->setMiddleware(['auth']),
 ];
