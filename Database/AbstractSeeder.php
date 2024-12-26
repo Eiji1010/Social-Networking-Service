@@ -12,8 +12,11 @@ abstract class AbstractSeeder implements Seeder
     protected array $tableColumns = [];
     const AVAILABLE_TYPES = [
         'int' => 'i',
+        '?int' => 'i',
         'float' => 'd',
+        '?float' => 'd',
         'string' => 's',
+        '?string' => 's',
     ];
 
     public function __construct(MySQLWrapper $conn)
@@ -36,14 +39,16 @@ abstract class AbstractSeeder implements Seeder
     private function validateRow(array $row): void
     {
         if (count($row) !== count($this->tableColumns)) throw new \Exception("Column count mismatch");
-
             foreach ($row as $i => $value) {
 
                 $columnDataType = $this->tableColumns[$i]['data_type'];
-                $columnName = $this->tableColumns[$i]['column_name'];
+                if (str_contains($columnDataType, "?")) {
+                    $columnDataType = str_replace("?", "", $columnDataType);
+                }
 
+                if ($this->tableColumns[$i]['data_type'] === '?int' && $value === null) continue;
                 if (!isset(self::AVAILABLE_TYPES[$columnDataType])) throw new \InvalidArgumentException(sprintf("Invalid data type %s", $columnDataType));
-                if (get_debug_type($value) !== $columnDataType) throw new \InvalidArgumentException(sprintf("Value for %s should be of type %s. Here is the current value: %s", $columnName, $columnDataType, json_encode($value)));
+                if ((get_debug_type($value) !== $columnDataType)) throw new \InvalidArgumentException(sprintf("Value for %s should be of type %s. Here is the current value: %s", $columnName, $columnDataType, json_encode($value)));
             }
     }
 
