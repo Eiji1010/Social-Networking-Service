@@ -40,6 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
         console.error('Create Post Modal not found.');
     }
 });
+
 document.addEventListener('DOMContentLoaded', () => {
     const tabLinks = document.querySelectorAll('.tab-link'); // タブリンクのセレクタ
     const tabContents = document.querySelectorAll('.tab-content'); // タブコンテンツのセレクタ
@@ -48,6 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
         link.addEventListener('click', (event) => {
             event.preventDefault(); // リンクのデフォルト動作を無効化
             const targetTab = link.getAttribute('data-tab'); // 対象のタブIDを取得
+            console.log(`Tab clicked: ${targetTab}`); // デバッグ用ログ
 
             // すべてのタブリンクを非アクティブ化
             tabLinks.forEach(link => {
@@ -64,11 +66,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 content.classList.add('hidden');
             });
 
-            // 対象のタブコンテンツを表示
-            const activeTab = document.getElementById(targetTab);
-            if (activeTab) {
-                activeTab.classList.remove('hidden');
-            }
+            // 該当するすべてのタブコンテンツを表示
+            const activeTabs = document.querySelectorAll(`[id^="${targetTab}"]`);
+            activeTabs.forEach(tab => tab.classList.remove('hidden'));
         });
     });
 });
