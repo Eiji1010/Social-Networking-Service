@@ -9,11 +9,10 @@ class Message implements Interfaces\Model
 {
     use GenericModel;
     public function __construct(
-        private ?int $id,
         private int $senderId,
-        private ?int $receiverId,
         private string $content,
-        private string $type
+        private ?int $receiverId = null,
+        private ?int $id = null,
     ){}
 
     public function getId(): ?int {
