@@ -7,9 +7,11 @@ use Response\HTTPRenderer;
 class RedirectRenderer implements HTTPRenderer
 {
     private string $route;
-    public function __construct(string $route)
+    private array $data;
+    public function __construct(string $route, array $data = [])
     {
         $this->route = $route;
+        $this->data = $data;
     }
 
     public function getFields(): array
@@ -23,6 +25,6 @@ class RedirectRenderer implements HTTPRenderer
 
     public function getContent(): string
     {
-        return '';
+        return json_encode($this->data);
     }
 }
