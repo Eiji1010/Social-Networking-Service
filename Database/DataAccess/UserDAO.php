@@ -10,4 +10,5 @@ interface UserDAO
     public function getByEmail(string $email): ?User;
     public function getHashedPasswordById(int $id): ?string;
     public function updateProfile(array $data): bool;
+    public function getAll(): array;
 }
