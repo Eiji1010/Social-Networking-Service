@@ -2,7 +2,9 @@
 
 namespace Database;
 
+use Database\DataAccess\MessageDAO;
 use Database\DataAccess\UserDAO;
+use Database\Implementations\MessageDAOImpl;
 use Database\Implementations\UserDAOImpl;
 
 class DAOFactory
@@ -10,5 +12,10 @@ class DAOFactory
     public static function getUserDAO(): UserDAO
     {
         return new UserDAOImpl();
+    }
+
+    public static function getMessageDAO(): MessageDAO
+    {
+        return new MessageDAOImpl();
     }
 }
