@@ -104,6 +104,7 @@
 
         <!-- タブコンテンツ -->
         <!-- Trendingのコンテンツ -->
+        <?php for ($i = 0; $i < 10; $i++): ?>
         <section id="trending" class="tab-content">
             <!-- タイムライン -->
             <section class="space-y-6 mt-6">
@@ -198,103 +199,105 @@
                 </article>
             </section>
         </section>
+        <?php endfor; ?>
 
         <!-- Followingのコンテンツ -->
-        <section id="following" class="tab-content hidden">
-            <!-- タイムライン -->
-            <section class="space-y-6 mt-6">
-                <article class="flex flex-col gap-4 px-4">
-                    <!-- プロフィールとツイート内容 -->
-                    <div class="flex items-start gap-4">
-                        <div
-                                class="w-12 h-12 bg-center bg-cover rounded-full"
-                                style="background-image: url('#')"
-                        ></div>
-                        <div>
-                            <h3 class="text-sm font-bold">Jackie Altman</h3>
-                            <p class="text-sm text-[#60778a]">
-                                This is a test tweet. Please do not like or reply. This is Following tab.
-                            </p>
+        <?php for ($i = 0; $i < count($message); $i++): ?>
+            <section id="following" class="tab-content hidden">
+                <!-- タイムライン -->
+                <section class="space-y-6 mt-6">
+                    <article class="flex flex-col gap-4 px-4">
+                        <!-- プロフィールとツイート内容 -->
+                        <div class="flex items-start gap-4">
+                            <div
+                                    class="w-12 h-12 bg-center bg-cover rounded-full"
+                                    style="background-image: url('#')"
+                            ></div>
+                            <div>
+                                <h3 class="text-sm font-bold">Jackie Altman</h3>
+                                <h1 class="text-sm text-[#60778a]">
+                                    <?php echo htmlspecialchars($message[$i]->getContent()) ?>
+                                </h1>
+                            </div>
                         </div>
-                    </div>
-                    <!-- アクションボタン -->
-                    <div class="flex items-center justify-start gap-6 px-4">
-                        <button
-                                type="button"
-                                class="flex items-center gap-1 text-[#60778a] hover:text-[#2094f3] transition"
-                                aria-label="Like this post"
-                        >
-                            <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    width="24px"
-                                    height="24px"
-                                    fill="currentColor"
-                                    viewBox="0 0 256 256"
+                        <!-- アクションボタン -->
+                        <div class="flex items-center justify-start gap-6 px-4">
+                            <button
+                                    type="button"
+                                    class="flex items-center gap-1 text-[#60778a] hover:text-[#2094f3] transition"
+                                    aria-label="Like this post"
                             >
-                                <path
-                                        d="M178,32c-20.65,0-38.73,8.88-50,23.89C116.73,40.88,98.65,32,78,32A62.07,62.07,0,0,0,16,94c0,70,103.79,126.66,108.21,129a8,8,0,0,0,7.58,0C136.21,220.66,240,164,240,94A62.07,62.07,0,0,0,178,32ZM128,206.8C109.74,196.16,32,147.69,32,94A46.06,46.06,0,0,1,78,48c19.45,0,35.78,10.36,42.6,27a8,8,0,0,0,14.8,0c6.82-16.67,23.15-27,42.6-27a46.06,46.06,0,0,1,46,46C224,147.61,146.24,196.15,128,206.8Z"
-                                ></path>
-                            </svg>
-                            <p class="text-[13px] font-bold">23</p>
-                        </button>
-                        <button
-                                type="button"
-                                class="flex items-center gap-1 text-[#60778a] hover:text-[#2094f3] transition"
-                                aria-label="Comment on this post"
-                        >
-                            <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    width="24px"
-                                    height="24px"
-                                    fill="currentColor"
-                                    viewBox="0 0 256 256"
+                                <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        width="24px"
+                                        height="24px"
+                                        fill="currentColor"
+                                        viewBox="0 0 256 256"
+                                >
+                                    <path
+                                            d="M178,32c-20.65,0-38.73,8.88-50,23.89C116.73,40.88,98.65,32,78,32A62.07,62.07,0,0,0,16,94c0,70,103.79,126.66,108.21,129a8,8,0,0,0,7.58,0C136.21,220.66,240,164,240,94A62.07,62.07,0,0,0,178,32ZM128,206.8C109.74,196.16,32,147.69,32,94A46.06,46.06,0,0,1,78,48c19.45,0,35.78,10.36,42.6,27a8,8,0,0,0,14.8,0c6.82-16.67,23.15-27,42.6-27a46.06,46.06,0,0,1,46,46C224,147.61,146.24,196.15,128,206.8Z"
+                                    ></path>
+                                </svg>
+                                <p class="text-[13px] font-bold">23</p>
+                            </button>
+                            <button
+                                    type="button"
+                                    class="flex items-center gap-1 text-[#60778a] hover:text-[#2094f3] transition"
+                                    aria-label="Comment on this post"
                             >
-                                <path
-                                        d="M128,24A104,104,0,0,0,36.18,176.88L24.83,210.93a16,16,0,0,0,20.24,20.24l34.05-11.35A104,104,0,1,0,128,24Zm0,192a87.87,87.87,0,0,1-44.06-11.81,8,8,0,0,0-6.54-.67L40,216,52.47,178.6a8,8,0,0,0-.66-6.54A88,88,0,1,1,128,216Z"
-                                ></path>
-                            </svg>
-                            <p class="text-[13px] font-bold">4</p>
-                        </button>
-                        <button
-                                type="button"
-                                class="flex items-center gap-1 text-[#60778a] hover:text-[#2094f3] transition"
-                                aria-label="Share this post"
-                        >
-                            <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    width="24px"
-                                    height="24px"
-                                    fill="currentColor"
-                                    viewBox="0 0 256 256"
+                                <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        width="24px"
+                                        height="24px"
+                                        fill="currentColor"
+                                        viewBox="0 0 256 256"
+                                >
+                                    <path
+                                            d="M128,24A104,104,0,0,0,36.18,176.88L24.83,210.93a16,16,0,0,0,20.24,20.24l34.05-11.35A104,104,0,1,0,128,24Zm0,192a87.87,87.87,0,0,1-44.06-11.81,8,8,0,0,0-6.54-.67L40,216,52.47,178.6a8,8,0,0,0-.66-6.54A88,88,0,1,1,128,216Z"
+                                    ></path>
+                                </svg>
+                                <p class="text-[13px] font-bold">4</p>
+                            </button>
+                            <button
+                                    type="button"
+                                    class="flex items-center gap-1 text-[#60778a] hover:text-[#2094f3] transition"
+                                    aria-label="Share this post"
                             >
-                                <path
-                                        d="M229.66,109.66l-48,48a8,8,0,0,1-11.32-11.32L204.69,112H165a88,88,0,0,0-85.23,66,8,8,0,0,1-15.5-4A103.94,103.94,0,0,1,165,96h39.71L170.34,61.66a8,8,0,0,1,11.32-11.32l48,48A8,8,0,0,1,229.66,109.66ZM192,208H40V88a8,8,0,0,0-16,0V208a16,16,0,0,0,16,16H192a8,8,0,0,0,0-16Z"
-                                ></path>
-                            </svg>
-                            <p class="text-[13px] font-bold">5</p>
-                        </button>
-                        <button
-                                type="button"
-                                class="flex items-center gap-1 text-[#60778a] hover:text-[#2094f3] transition"
-                                aria-label="Retweet this post"
-                        >
-                            <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    width="24px"
-                                    height="24px"
-                                    fill="currentColor"
-                                    viewBox="0 0 256 256"
+                                <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        width="24px"
+                                        height="24px"
+                                        fill="currentColor"
+                                        viewBox="0 0 256 256"
+                                >
+                                    <path
+                                            d="M229.66,109.66l-48,48a8,8,0,0,1-11.32-11.32L204.69,112H165a88,88,0,0,0-85.23,66,8,8,0,0,1-15.5-4A103.94,103.94,0,0,1,165,96h39.71L170.34,61.66a8,8,0,0,1,11.32-11.32l48,48A8,8,0,0,1,229.66,109.66ZM192,208H40V88a8,8,0,0,0-16,0V208a16,16,0,0,0,16,16H192a8,8,0,0,0,0-16Z"
+                                    ></path>
+                                </svg>
+                                <p class="text-[13px] font-bold">5</p>
+                            </button>
+                            <button
+                                    type="button"
+                                    class="flex items-center gap-1 text-[#60778a] hover:text-[#2094f3] transition"
+                                    aria-label="Retweet this post"
                             >
-                                <path
-                                        d="M240,56v48a8,8,0,0,1-8,8H184a8,8,0,0,1,0-16H211.4L184.81,71.64l-.25-.24a80,80,0,1,0-1.67,114.78,8,8,0,0,1,11,11.63A95.44,95.44,0,0,1,128,224h-1.32A96,96,0,1,1,195.75,60L224,85.8V56a8,8,0,1,1,16,0Z"
-                                ></path>
-                            </svg>
-                        </button>
-                    </div>
-                </article>
+                                <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        width="24px"
+                                        height="24px"
+                                        fill="currentColor"
+                                        viewBox="0 0 256 256"
+                                >
+                                    <path
+                                            d="M240,56v48a8,8,0,0,1-8,8H184a8,8,0,0,1,0-16H211.4L184.81,71.64l-.25-.24a80,80,0,1,0-1.67,114.78,8,8,0,0,1,11,11.63A95.44,95.44,0,0,1,128,224h-1.32A96,96,0,1,1,195.75,60L224,85.8V56a8,8,0,1,1,16,0Z"
+                                    ></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </article>
+                </section>
             </section>
-        </section>
-
+        <?php endfor; ?>
 
     </main>
 

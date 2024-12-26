@@ -5,6 +5,7 @@ use Database\DAOFactory;
 use Exception;
 use Helpers\Authenticate;
 use Helpers\ValidationHelper;
+use Models\Message;
 use Models\User;
 use Response\FlashData;
 use Response\Render\HTMLRenderer;
@@ -82,7 +83,9 @@ return [
     })->setMiddleware(['guest']),
 
     'homepage' => Route::create('homepage', function(){
-        return new HTMLRenderer('page/homepage', []);
+        $messageDao = DAOFactory::getMessageDAO();
+        $message = $messageDao->getBySenderId(Authenticate::getAuthenticatedUser()->getId());
+        return new HTMLRenderer('page/homepage', ['message' => $message]);
     })->setMiddleware(['auth']),
 
     'profile' => Route::create('profile', function(){
@@ -136,6 +139,12 @@ return [
 
     "form/post" => Route::create("/form/post", function(){
         error_log(json_encode($_POST['post']));
-        return new RedirectRenderer('homepage');
+        $content = $_POST['post'];
+        $receiverId = $_POST['receiverId'] ?? null;
+        $message = new Message(senderId: Authenticate::getAuthenticatedUser()->getId(), content: $content, receiverId: $receiverId);
+        $messageDao = DAOFactory::getMessageDAO();
+        $messageDao->create($message);
+        $message = $messageDao->getBySenderId(Authenticate::getAuthenticatedUser()->getId());
+        return new RedirectRenderer('homepage', ['message' => $message]);
     })->setMiddleware(['auth']),
 ];
