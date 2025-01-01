@@ -5,9 +5,11 @@ use Database\DAOFactory;
 use Exception;
 use Helpers\Authenticate;
 use Helpers\ValidationHelper;
+use Models\Message;
 use Models\User;
 use Response\FlashData;
 use Response\Render\HTMLRenderer;
+use Response\Render\JsonRenderer;
 use Response\Render\RedirectRenderer;
 use Types\ValueType;
 
@@ -82,12 +84,35 @@ return [
     })->setMiddleware(['guest']),
 
     'homepage' => Route::create('homepage', function(){
-        return new HTMLRenderer('page/homepage', []);
+        $messageDao = DAOFactory::getMessageDAO();
+        $message = $messageDao->getBySenderId(Authenticate::getAuthenticatedUser()->getId(), 1, 10);
+        return new HTMLRenderer('page/homepage', ['message' => $message]);
     })->setMiddleware(['auth']),
 
     'profile' => Route::create('profile', function(){
         return new HTMLRenderer('page/profile', []);
     })->setMiddleware(['auth']),
+
+    "api/profile" => Route::create('api/profile', function() {
+        try {
+            $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+            $limit = 20; // 1ページあたりの件数
+            $offset = ($page - 1) * $limit;
+
+                $messageDao = DAOFactory::getMessageDAO();
+                $userId = Authenticate::getAuthenticatedUser()->getId();
+
+                $messages = $messageDao->getBySenderId($userId, $offset, $limit);
+                $totalMessages = $messageDao->countBySenderId($userId);
+                return new JsonRenderer([
+                    'message' => array_map(fn($message) => $message->getContent(), $messages),
+                    'hasMore' => ($offset + $limit) < $totalMessages
+                ]);
+        }
+        catch (Exception $e) {
+            return new JsonRenderer(['error' => $e->getMessage()], 500);
+        }
+    }),
 
     'form/edit-profile' => Route::create('/form/edit-profile', function() {
         try{
@@ -133,4 +158,49 @@ return [
             return new RedirectRenderer('profile');
         }
     })->setMiddleware(['auth']),
+
+    "form/post" => Route::create("/form/post", function(){
+        $content = $_POST['post'];
+        $receiverId = $_POST['receiverId'] ?? null;
+        $message = new Message(senderId: Authenticate::getAuthenticatedUser()->getId(), content: $content, receiverId: $receiverId);
+        $messageDao = DAOFactory::getMessageDAO();
+        $messageDao->create($message);
+        $message = $messageDao->getBySenderId(Authenticate::getAuthenticatedUser()->getId());
+        return new RedirectRenderer('homepage', ['message' => $message]);
+    })->setMiddleware(['auth']),
+
+    "api/messages" => Route::create('/api/messages', function () {
+        try {
+            $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+            $limit = 20; // 1ページあたりの件数
+            $offset = ($page - 1) * $limit;
+
+            if ($_GET['tab'] === 'trending') {
+            $messageDao = DAOFactory::getMessageDAO();
+            $userId = 2;
+
+            $messages = $messageDao->getBySenderId($userId, $offset, $limit);
+            $totalMessages = $messageDao->countBySenderId($userId);
+                return new JsonRenderer([
+                'message' => array_map(fn($message) => $message->getContent(), $messages),
+                'hasMore' => ($offset + $limit) < $totalMessages
+            ]);
+            } elseif ($_GET['tab'] === 'following') {
+                $messageDao = DAOFactory::getMessageDAO();
+                $userId = Authenticate::getAuthenticatedUser()->getId();
+
+                $messages = $messageDao->getBySenderId($userId, $offset, $limit);
+                $totalMessages = $messageDao->countBySenderId($userId);
+                return new JsonRenderer([
+                    'message' => array_map(fn($message) => $message->getContent(), $messages),
+                    'hasMore' => ($offset + $limit) < $totalMessages
+                ]);
+            } else {
+                http_response_code(400);
+                echo json_encode(['error' => 'Invalid tab specified.']);
+            }
+        } catch (Exception $e) {
+            return new JsonRenderer(['error' => $e->getMessage()], 500);
+        }
+    }),
 ];

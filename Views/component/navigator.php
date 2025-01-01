@@ -92,9 +92,12 @@
     <!-- 投稿作成モーダル -->
     <div id="createPostModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
         <!-- モーダルのコンテンツ -->
-        <div class="bg-white p-6 rounded-lg shadow-lg w-[90%] max-w-md relative">
-            <h2 class="text-xl font-bold mb-4">Create Post</h2>
+        <form  method="post" action="form/post" class="bg-white p-6 rounded-lg shadow-lg w-[90%] max-w-md relative">
+            <input type="hidden" name="csrf_token" value=<?= Helpers\CrossSiteForgeryProtection::getToken(); ?>>
+            <label class="text-xl font-bold mb-4" for="post">Create Post</label>
             <textarea
+                    id="post"
+                    name="post"
                     placeholder="What's happening?"
                     class="w-full p-2 border border-gray-300 rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-blue-400"
                     rows="4"
@@ -150,6 +153,7 @@
                     </div>
                     <button
                             class="min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-8 px-4 bg-[#2094f3] text-white text-sm font-medium leading-normal hidden sm:block"
+                            type="submit"
                     >
                         <span class="truncate">Post</span>
                     </button>
@@ -163,5 +167,6 @@
             >
                 &times;
             </button>
+        </form>
         </div>
     </div>

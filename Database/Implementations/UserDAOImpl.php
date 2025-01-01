@@ -97,4 +97,16 @@ class UserDAOImpl implements UserDAO
             ]
         );
     }
+
+    public function getAll(): array
+    {
+        $mysqli = new MySQLWrapper();
+        $query = "SELECT * FROM users";
+        $rawData = $mysqli->query($query);
+        $users = [];
+        foreach ($rawData as $rawUser) {
+            $users[] = $this->rawDataToUser($rawUser);
+        }
+        return $users;
+    }
 }

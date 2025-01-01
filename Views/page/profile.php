@@ -31,6 +31,14 @@
         </div>
     </section>
 
+    <!-- コンテンツ -->
+    <section id="profile" class="tab-content">
+        <!-- タイムライン -->
+        <section id="profile-contents" class="space-y-6 mt-6 ml-10">
+
+        </section>
+    </section>
+
     <!-- モーダル -->
     <div
             id="editProfileModal"
