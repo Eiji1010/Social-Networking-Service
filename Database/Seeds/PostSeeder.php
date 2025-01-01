@@ -56,7 +56,7 @@ class PostSeeder extends AbstractSeeder
                 'mediaUrl' => null,
                 'isScheduled' => false,
                 'scheduled_at' => null,
-                'postDate' => $faker->dateTimeThisYear->format('Y-m-d H:i:s')
+                'postDate' => $faker->dateTimeThisCentury()->format('Y-m-d H:i:s')
             ];
         }
         return $data;
