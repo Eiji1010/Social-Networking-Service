@@ -45,7 +45,8 @@ class MessageSeeder extends AbstractSeeder
         for ($i = 0; $i < $num; $i++){
             $data[] = [
                 'content' => $faker->text,
-                'senderId' => $faker->randomElement($senderIds),
+//                'senderId' => $faker->randomElement($senderIds),
+                'senderId' => $faker->randomElement([1]),
                 'receiverId' => $faker->randomElement($receiverIds),
                 'created_at' => $faker->dateTimeThisYear->format('Y-m-d H:i:s')
             ];
