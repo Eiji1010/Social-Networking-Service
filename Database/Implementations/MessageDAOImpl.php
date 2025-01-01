@@ -49,12 +49,7 @@ class MessageDAOImpl implements MessageDAO
             $types .= 'ii';
         }
 
-//        error_log($query);
-//        error_log($offset);
-//        error_log($count);
-
         $messageRaw = $mysqli->prepareAndFetchAll($query, $types, $params);
-        error_log(json_encode($messageRaw));
         if ($messageRaw === null) return null;
         return array_map(fn($messageRaw) => $this->rawDataToMessage($messageRaw), $messageRaw);
     }
