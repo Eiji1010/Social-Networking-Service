@@ -36,11 +36,25 @@ class MessageDAOImpl implements MessageDAO
         return $this->rawDataToMessage($messageRaw);
     }
 
-    public function getBySenderId(int $senderId, string $sort='desc'): ?array
+    public function getBySenderId(int $senderId, ?int $offset=null, ?int $count=null, string $sort='desc'): ?array
     {
         $mysqli = new MySQLWrapper();
         $query = "SELECT * FROM messages WHERE senderId = ? ORDER BY created_at $sort";
-        $messageRaw = $mysqli->prepareAndFetchAll($query, 'i', [$senderId]);
+        $params = [$senderId];
+        $types = 'i';
+
+        if ($offset!== null && $count!== null) {
+            $query .= " LIMIT ?, ?";
+            $params = array_merge($params, [(int)$offset, (int)$count]);
+            $types .= 'ii';
+        }
+
+//        error_log($query);
+//        error_log($offset);
+//        error_log($count);
+
+        $messageRaw = $mysqli->prepareAndFetchAll($query, $types, $params);
+        error_log(json_encode($messageRaw));
         if ($messageRaw === null) return null;
         return array_map(fn($messageRaw) => $this->rawDataToMessage($messageRaw), $messageRaw);
     }
@@ -60,5 +74,14 @@ class MessageDAOImpl implements MessageDAO
             receiverId: $messageRaw['receiverId'],
             id: $messageRaw['id'],
         );
+    }
+
+    public function countBySenderId($userId) : int
+    {
+        $mysqli = new MySQLWrapper();
+        $query = "SELECT COUNT(*) FROM messages WHERE senderId = ?";
+        $result = $mysqli->prepareAndFetchAll($query, 'i', [$userId]);
+
+        return (int) $result[0]['COUNT(*)'];
     }
 }
