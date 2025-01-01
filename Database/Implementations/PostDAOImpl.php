@@ -11,7 +11,7 @@ class PostDAOImpl implements PostDAO
 
     public function create(Post $post): bool
     {
-        if ($post->getId() == null) throw new \Exception("Post id cannot be null");
+        if ($post->getId() != null) throw new \Exception("Post already exists in the database.");
 
         $mysqli = new MySQLWrapper();
         $query = "INSERT INTO posts (userId, content) VALUE (?, ?)";
