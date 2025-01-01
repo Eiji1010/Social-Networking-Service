@@ -97,7 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // メッセージをロードする関数
         const loadMessages = async (tab, page) => {
             try {
-                const response = await fetch(`/api/messages?tab=${tab}&page=${page}`);
+                const response = await fetch(`/api/posts?tab=${tab}&page=${page}`);
                 if (!response.ok) throw new Error('Failed to fetch messages.');
 
                 const data = await response.json();
