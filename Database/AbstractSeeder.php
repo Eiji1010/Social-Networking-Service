@@ -17,6 +17,8 @@ abstract class AbstractSeeder implements Seeder
         '?float' => 'd',
         'string' => 's',
         '?string' => 's',
+        'bool' => 'i',
+        '?bool' => 'i',
     ];
 
     public function __construct(MySQLWrapper $conn)
@@ -40,13 +42,14 @@ abstract class AbstractSeeder implements Seeder
     {
         if (count($row) !== count($this->tableColumns)) throw new \Exception("Column count mismatch");
             foreach ($row as $i => $value) {
+                $columnName = $this->tableColumns[$i]['column_name'];
 
                 $columnDataType = $this->tableColumns[$i]['data_type'];
                 if (str_contains($columnDataType, "?")) {
                     $columnDataType = str_replace("?", "", $columnDataType);
                 }
 
-                if ($this->tableColumns[$i]['data_type'] === '?int' && $value === null) continue;
+                if (($this->tableColumns[$i]['data_type'] === '?int' || $this->tableColumns[$i]['data_type'] === '?string') && $value === null) continue;
                 if (!isset(self::AVAILABLE_TYPES[$columnDataType])) throw new \InvalidArgumentException(sprintf("Invalid data type %s", $columnDataType));
                 if ((get_debug_type($value) !== $columnDataType)) throw new \InvalidArgumentException(sprintf("Value for %s should be of type %s. Here is the current value: %s", $columnName, $columnDataType, json_encode($value)));
             }
