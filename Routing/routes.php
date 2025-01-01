@@ -9,6 +9,7 @@ use Models\Message;
 use Models\User;
 use Response\FlashData;
 use Response\Render\HTMLRenderer;
+use Response\Render\JsonRenderer;
 use Response\Render\RedirectRenderer;
 use Types\ValueType;
 
@@ -84,7 +85,8 @@ return [
 
     'homepage' => Route::create('homepage', function(){
         $messageDao = DAOFactory::getMessageDAO();
-        $message = $messageDao->getBySenderId(Authenticate::getAuthenticatedUser()->getId());
+        $message = $messageDao->getBySenderId(Authenticate::getAuthenticatedUser()->getId(), 1, 10);
+        error_log('Message: ' . json_encode($message[0]->getContent()));
         return new HTMLRenderer('page/homepage', ['message' => $message]);
     })->setMiddleware(['auth']),
 
@@ -147,4 +149,51 @@ return [
         $message = $messageDao->getBySenderId(Authenticate::getAuthenticatedUser()->getId());
         return new RedirectRenderer('homepage', ['message' => $message]);
     })->setMiddleware(['auth']),
+
+    "api/messages" => Route::create('/api/messages', function () {
+        try {
+            $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+            $limit = 20; // 1ページあたりの件数
+            $offset = ($page - 1) * $limit;
+//
+//            $messageDao = DAOFactory::getMessageDAO();
+//            $userId = Authenticate::getAuthenticatedUser()->getId();
+//
+//            $messages = $messageDao->getBySenderId($userId, $offset, $limit);
+//            $totalMessages = $messageDao->countBySenderId($userId);
+//
+//            error_log($messages[0]->getContent());
+//
+//            return new JsonRenderer([
+//                'message' => array_map(fn($message) => $message->getContent(), $messages),
+//                'hasMore' => ($offset + $limit) < $totalMessages
+//            ]);
+            if ($_GET['tab'] === 'trending') {
+            $messageDao = DAOFactory::getMessageDAO();
+            $userId = 2;
+
+            $messages = $messageDao->getBySenderId($userId, $offset, $limit);
+            $totalMessages = $messageDao->countBySenderId($userId);
+                return new JsonRenderer([
+                'message' => array_map(fn($message) => $message->getContent(), $messages),
+                'hasMore' => ($offset + $limit) < $totalMessages
+            ]);
+            } elseif ($_GET['tab'] === 'following') {
+                $messageDao = DAOFactory::getMessageDAO();
+                $userId = Authenticate::getAuthenticatedUser()->getId();
+
+                $messages = $messageDao->getBySenderId($userId, $offset, $limit);
+                $totalMessages = $messageDao->countBySenderId($userId);
+                return new JsonRenderer([
+                    'message' => array_map(fn($message) => $message->getContent(), $messages),
+                    'hasMore' => ($offset + $limit) < $totalMessages
+                ]);
+            } else {
+                http_response_code(400);
+                echo json_encode(['error' => 'Invalid tab specified.']);
+            }
+        } catch (Exception $e) {
+            return new JsonRenderer(['error' => $e->getMessage()], 500);
+        }
+    }),
 ];
