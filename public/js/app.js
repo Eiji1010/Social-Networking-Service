@@ -114,7 +114,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             style="background-image: url('#')">
                         </div>
                         <div>
-                            <h3 class="text-sm font-bold">Jackie Altman</h3>
+                            <h3 class="text-sm font-bold mt-6">Jackie Altman</h3>
                             <p class="text-sm text-[#60778a]">
                             ${message}
                             </p>
