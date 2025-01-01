@@ -100,13 +100,13 @@ return [
             $limit = 20; // 1ページあたりの件数
             $offset = ($page - 1) * $limit;
 
-                $messageDao = DAOFactory::getMessageDAO();
+                $postDAO = DAOFactory::getPostDAO();
                 $userId = Authenticate::getAuthenticatedUser()->getId();
 
-                $messages = $messageDao->getBySenderId($userId, $offset, $limit);
-                $totalMessages = $messageDao->countBySenderId($userId);
+                $posts = $postDAO->getByUserId($userId, $offset, $limit);
+                $totalMessages = $postDAO->countByUserId($userId);
                 return new JsonRenderer([
-                    'message' => array_map(fn($message) => $message->getContent(), $messages),
+                    'message' => array_map(fn($message) => $message->getContent(), $posts),
                     'hasMore' => ($offset + $limit) < $totalMessages
                 ]);
         }
