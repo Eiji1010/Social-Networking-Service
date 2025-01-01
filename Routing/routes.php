@@ -6,6 +6,7 @@ use Exception;
 use Helpers\Authenticate;
 use Helpers\ValidationHelper;
 use Models\Message;
+use Models\Post;
 use Models\User;
 use Response\FlashData;
 use Response\Render\HTMLRenderer;
@@ -99,13 +100,13 @@ return [
             $limit = 20; // 1ページあたりの件数
             $offset = ($page - 1) * $limit;
 
-                $messageDao = DAOFactory::getMessageDAO();
+                $postDAO = DAOFactory::getPostDAO();
                 $userId = Authenticate::getAuthenticatedUser()->getId();
 
-                $messages = $messageDao->getBySenderId($userId, $offset, $limit);
-                $totalMessages = $messageDao->countBySenderId($userId);
+                $posts = $postDAO->getByUserId($userId, $offset, $limit);
+                $totalMessages = $postDAO->countByUserId($userId);
                 return new JsonRenderer([
-                    'message' => array_map(fn($message) => $message->getContent(), $messages),
+                    'message' => array_map(fn($message) => $message->getContent(), $posts),
                     'hasMore' => ($offset + $limit) < $totalMessages
                 ]);
         }
@@ -161,36 +162,35 @@ return [
 
     "form/post" => Route::create("/form/post", function(){
         $content = $_POST['post'];
-        $receiverId = $_POST['receiverId'] ?? null;
-        $message = new Message(senderId: Authenticate::getAuthenticatedUser()->getId(), content: $content, receiverId: $receiverId);
-        $messageDao = DAOFactory::getMessageDAO();
-        $messageDao->create($message);
-        $message = $messageDao->getBySenderId(Authenticate::getAuthenticatedUser()->getId());
-        return new RedirectRenderer('homepage', ['message' => $message]);
+        $post = new Post(userId: Authenticate::getAuthenticatedUser()->getId(), content: $content);
+        $postDao = DAOFactory::getPostDAO();
+        $postDao->create($post);
+        $post = $postDao->getByUserId(Authenticate::getAuthenticatedUser()->getId());
+        return new RedirectRenderer('homepage', ['post' => $post]);
     })->setMiddleware(['auth']),
 
-    "api/messages" => Route::create('/api/messages', function () {
+    "api/posts" => Route::create('/api/messages', function () {
         try {
             $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
             $limit = 20; // 1ページあたりの件数
             $offset = ($page - 1) * $limit;
 
             if ($_GET['tab'] === 'trending') {
-            $messageDao = DAOFactory::getMessageDAO();
-            $userId = 2;
+                $postDAO = DAOFactory::getPostDAO();
+                $userId = 2;
 
-            $messages = $messageDao->getBySenderId($userId, $offset, $limit);
-            $totalMessages = $messageDao->countBySenderId($userId);
+                $messages = $postDAO->getByUserId($userId, $offset, $limit);
+                $totalMessages = $postDAO->countByUserId($userId);
                 return new JsonRenderer([
-                'message' => array_map(fn($message) => $message->getContent(), $messages),
-                'hasMore' => ($offset + $limit) < $totalMessages
-            ]);
+                    'message' => array_map(fn($message) => $message->getContent(), $messages),
+                    'hasMore' => ($offset + $limit) < $totalMessages
+                ]);
             } elseif ($_GET['tab'] === 'following') {
-                $messageDao = DAOFactory::getMessageDAO();
+                $postDAO = DAOFactory::getPostDAO();
                 $userId = Authenticate::getAuthenticatedUser()->getId();
 
-                $messages = $messageDao->getBySenderId($userId, $offset, $limit);
-                $totalMessages = $messageDao->countBySenderId($userId);
+                $messages = $postDAO->getByUserId($userId, $offset, $limit);
+                $totalMessages = $postDAO->countByUserId($userId);
                 return new JsonRenderer([
                     'message' => array_map(fn($message) => $message->getContent(), $messages),
                     'hasMore' => ($offset + $limit) < $totalMessages

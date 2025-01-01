@@ -97,7 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // メッセージをロードする関数
         const loadMessages = async (tab, page) => {
             try {
-                const response = await fetch(`/api/messages?tab=${tab}&page=${page}`);
+                const response = await fetch(`/api/posts?tab=${tab}&page=${page}`);
                 if (!response.ok) throw new Error('Failed to fetch messages.');
 
                 const data = await response.json();
@@ -114,7 +114,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             style="background-image: url('#')">
                         </div>
                         <div>
-                            <h3 class="text-sm font-bold">Jackie Altman</h3>
+                            <h3 class="text-sm font-bold mt-6">Jackie Altman</h3>
                             <p class="text-sm text-[#60778a]">
                             ${message}
                             </p>
