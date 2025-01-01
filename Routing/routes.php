@@ -6,6 +6,7 @@ use Exception;
 use Helpers\Authenticate;
 use Helpers\ValidationHelper;
 use Models\Message;
+use Models\Post;
 use Models\User;
 use Response\FlashData;
 use Response\Render\HTMLRenderer;
@@ -161,12 +162,11 @@ return [
 
     "form/post" => Route::create("/form/post", function(){
         $content = $_POST['post'];
-        $receiverId = $_POST['receiverId'] ?? null;
-        $message = new Message(senderId: Authenticate::getAuthenticatedUser()->getId(), content: $content, receiverId: $receiverId);
-        $messageDao = DAOFactory::getMessageDAO();
-        $messageDao->create($message);
-        $message = $messageDao->getBySenderId(Authenticate::getAuthenticatedUser()->getId());
-        return new RedirectRenderer('homepage', ['message' => $message]);
+        $post = new Post(userId: Authenticate::getAuthenticatedUser()->getId(), content: $content);
+        $postDao = DAOFactory::getPostDAO();
+        $postDao->create($post);
+        $post = $postDao->getByUserId(Authenticate::getAuthenticatedUser()->getId());
+        return new RedirectRenderer('homepage', ['post' => $post]);
     })->setMiddleware(['auth']),
 
     "api/posts" => Route::create('/api/messages', function () {
