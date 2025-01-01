@@ -176,15 +176,15 @@ return [
             $offset = ($page - 1) * $limit;
 
             if ($_GET['tab'] === 'trending') {
-            $postDAO = DAOFactory::getPostDAO();
-            $userId = 2;
+                $postDAO = DAOFactory::getPostDAO();
+                $userId = 2;
 
-            $messages = $postDAO->getByUserId($userId, $offset, $limit);
-            $totalMessages = $postDAO->countByUserId($userId);
+                $messages = $postDAO->getByUserId($userId, $offset, $limit);
+                $totalMessages = $postDAO->countByUserId($userId);
                 return new JsonRenderer([
-                'message' => array_map(fn($message) => $message->getContent(), $messages),
-                'hasMore' => ($offset + $limit) < $totalMessages
-            ]);
+                    'message' => array_map(fn($message) => $message->getContent(), $messages),
+                    'hasMore' => ($offset + $limit) < $totalMessages
+                ]);
             } elseif ($_GET['tab'] === 'following') {
                 $postDAO = DAOFactory::getPostDAO();
                 $userId = Authenticate::getAuthenticatedUser()->getId();
