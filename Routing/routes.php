@@ -175,6 +175,9 @@ return [
             $limit = 20; // 1ページあたりの件数
             $offset = ($page - 1) * $limit;
 
+//            $followerPostDao = DAOFactory::getFollowerPostDAO();
+//            error_log('FollowerPostDAO: ' . json_encode($followerPostDao->getFollowerPosts(Authenticate::getAuthenticatedUser()->getId(), $offset, $limit)));
+
             if ($_GET['tab'] === 'trending') {
                 $postDAO = DAOFactory::getPostDAO();
                 $userId = 2;
@@ -186,13 +189,23 @@ return [
                     'hasMore' => ($offset + $limit) < $totalMessages
                 ]);
             } elseif ($_GET['tab'] === 'following') {
-                $postDAO = DAOFactory::getPostDAO();
+                $followerPostDao = DAOFactory::getFollowerPostDAO();
                 $userId = Authenticate::getAuthenticatedUser()->getId();
 
-                $messages = $postDAO->getByUserId($userId, $offset, $limit);
-                $totalMessages = $postDAO->countByUserId($userId);
+                $messages = $followerPostDao->getFollowerPosts($userId, $offset, $limit);
+                $totalMessages = $followerPostDao->getFollowerPostsCount($userId);
+
+                $extractedMessages = array_map(function($message) {
+                    return [
+                        'username' => $message['poster_username'],
+                        'content' => $message['post_content'],
+                        'commentCount' => $message['comment_count'],
+                        'likeCount' => $message['like_count']
+                    ];
+                }, $messages);
+
                 return new JsonRenderer([
-                    'message' => array_map(fn($message) => $message->getContent(), $messages),
+                    'message' => $extractedMessages,
                     'hasMore' => ($offset + $limit) < $totalMessages
                 ]);
             } else {
