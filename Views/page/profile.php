@@ -1,7 +1,3 @@
-<?php
-    $user = \Helpers\Authenticate::getAuthenticatedUser();
-?>
-
 <!-- メインコンテンツ -->
 <main class="ml-80 flex-1 bg-white relative">
     <!-- プロフィールセクション -->
@@ -11,7 +7,7 @@
             <!-- プロフィール画像 -->
             <div>
                 <div
-                    class="w-32 h-32 rounded-full bg-center bg-cover border-4 border-white"
+                    class="w-32 h-32 rounded-full bg-center bg-cover border-4 border-white bg-gray-300"
                     style="background-image: url('#');"
                 ></div>
             </div>

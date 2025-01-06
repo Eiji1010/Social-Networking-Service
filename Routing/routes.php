@@ -91,24 +91,71 @@ return [
     })->setMiddleware(['auth']),
 
     'profile' => Route::create('profile', function(){
-        return new HTMLRenderer('page/profile', []);
+        $user = \Helpers\Authenticate::getAuthenticatedUser();
+        return new HTMLRenderer('page/profile', ['user' => $user]);
     })->setMiddleware(['auth']),
 
-    "api/profile" => Route::create('api/profile', function() {
+    "api/profile" => Route::create('api/profile?page=${page}', function() {
         try {
             $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
             $limit = 20; // 1ページあたりの件数
             $offset = ($page - 1) * $limit;
 
-                $postDAO = DAOFactory::getPostDAO();
-                $userId = Authenticate::getAuthenticatedUser()->getId();
+            $userDAO = DAOFactory::getUserDAO();
+            $userId = Authenticate::getAuthenticatedUser()->getId();
 
-                $posts = $postDAO->getByUserId($userId, $offset, $limit);
-                $totalMessages = $postDAO->countByUserId($userId);
-                return new JsonRenderer([
-                    'message' => array_map(fn($message) => $message->getContent(), $posts),
-                    'hasMore' => ($offset + $limit) < $totalMessages
-                ]);
+            $posts = $userDAO->getPosts($userId, $offset, $limit);
+
+            $postDAO = DAOFactory::getPostDAO();
+            $totalMessages = $postDAO->countByUserId($userId);
+            $extractedContents= array_map(function($message) {
+                return [
+                    'username' => Authenticate::getAuthenticatedUser()->getUsername(),
+                    'content' => $message['post_content'],
+                    'commentCount' => $message['comment_count'],
+                    'likeCount' => $message['like_count']
+                ];
+            }, $posts);
+
+            return new JsonRenderer([
+                'message' => $extractedContents,
+                'hasMore' => ($offset + $limit) < $totalMessages
+            ]);
+        }
+        catch (Exception $e) {
+            return new JsonRenderer(['error' => $e->getMessage()], 500);
+        }
+    }),
+
+    "api/userprofile" => Route::create('api/userprofile?page=${page}?username=${username}', function() {
+        try {
+            error_log(json_encode($_GET));
+            $username = $_GET['username'];
+            $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+            $limit = 20; // 1ページあたりの件数
+            $offset = ($page - 1) * $limit;
+
+            $userDAO = DAOFactory::getUserDAO();
+            $userId = $userDAO->getByUsername($username)->getId();
+            $username = $userDAO->getById($userId)->getUsername();
+
+            $posts = $userDAO->getPosts($userId, $offset, $limit);
+
+            $postDAO = DAOFactory::getPostDAO();
+            $totalMessages = $postDAO->countByUserId($userId);
+            $extractedContents= array_map(function($message) use ($username) {
+                return [
+                    'username' => $username,
+                    'content' => $message['post_content'],
+                    'commentCount' => $message['comment_count'],
+                    'likeCount' => $message['like_count']
+                ];
+            }, $posts);
+
+            return new JsonRenderer([
+                'message' => $extractedContents,
+                'hasMore' => ($offset + $limit) < $totalMessages
+            ]);
         }
         catch (Exception $e) {
             return new JsonRenderer(['error' => $e->getMessage()], 500);
@@ -169,14 +216,19 @@ return [
         return new RedirectRenderer('homepage', ['post' => $post]);
     })->setMiddleware(['auth']),
 
-    "api/posts" => Route::create('/api/messages', function () {
+    'user' => Route::create('/user?username=${username}', function(){
+        $username = $_GET['username'];
+        $userDao = DAOFactory::getUserDAO();
+        $user = $userDao->getByUsername($username);
+        error_log('Username: ' . $username);
+        return new HTMLRenderer('page/profile', ['user' => $user]);
+    })->setMiddleware(['auth']),
+
+    "api/posts" => Route::create('/api/posts', function () {
         try {
             $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
             $limit = 20; // 1ページあたりの件数
             $offset = ($page - 1) * $limit;
-
-//            $followerPostDao = DAOFactory::getFollowerPostDAO();
-//            error_log('FollowerPostDAO: ' . json_encode($followerPostDao->getFollowerPosts(Authenticate::getAuthenticatedUser()->getId(), $offset, $limit)));
 
             if ($_GET['tab'] === 'trending') {
                 $postDAO = DAOFactory::getPostDAO();
@@ -197,6 +249,7 @@ return [
 
                 $extractedMessages = array_map(function($message) {
                     return [
+                        'id' => $message['post_id'],
                         'username' => $message['poster_username'],
                         'content' => $message['post_content'],
                         'commentCount' => $message['comment_count'],

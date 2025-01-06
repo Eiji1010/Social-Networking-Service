@@ -9,7 +9,6 @@ use Models\User;
 
 class UserDAOImpl implements UserDAO
 {
-
     public function create(User $user, string $password): bool
     {
         if ($user->getId() !== null) throw new \Exception('Cannot create a user that already has an ID: ' . $user->getId());
@@ -108,5 +107,49 @@ class UserDAOImpl implements UserDAO
             $users[] = $this->rawDataToUser($rawUser);
         }
         return $users;
+    }
+
+    public function getPosts(int $userId, ?int $offset, ?int $count): ?array
+    {
+        $mysqli = new MySQLWrapper();
+        $query = "
+            SELECT 
+                posts.id AS post_id,
+                posts.content AS post_content,
+                posts.mediaUrl AS post_media,
+                posts.postDate AS post_date,
+                COUNT(DISTINCT comments.id) AS comment_count,
+                COUNT(DISTINCT likes.id) AS like_count
+            FROM 
+                posts
+            LEFT JOIN 
+                comments ON posts.id = comments.postId
+            LEFT JOIN 
+                likes ON posts.id = likes.postId
+            WHERE 
+                posts.userId = ?
+            GROUP BY 
+                posts.id, posts.content, posts.mediaUrl, posts.postDate
+            ORDER BY 
+                posts.postDate DESC";
+
+        $params = [$userId];
+        $types = 'i';
+        if ($offset!== null && $count!== null) {
+            $query .= " LIMIT ?, ?";
+            $params = array_merge($params, [(int)$offset, (int)$count]);
+            $types .= 'ii';
+        }
+        $rawData = $mysqli->prepareAndFetchAll($query, $types, $params);
+        return $rawData;
+    }
+
+    public function getByUsername(mixed $username)
+    {
+        $mysqli = new MySQLWrapper();
+        $query = "SELECT * FROM users WHERE username = ?";
+        $rawData = $mysqli->prepareAndFetchAll($query, 's', [$username]);
+        if (empty($rawData)) return null;
+        return $this->rawDataToUser($rawData[0]);
     }
 }
