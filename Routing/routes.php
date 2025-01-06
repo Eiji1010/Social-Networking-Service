@@ -205,6 +205,7 @@ return [
 
                 $extractedMessages = array_map(function($message) {
                     return [
+                        'id' => $message['post_id'],
                         'username' => $message['poster_username'],
                         'content' => $message['post_content'],
                         'commentCount' => $message['comment_count'],
