@@ -109,10 +109,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     post.className = 'flex flex-col gap-4 px-4';
                     post.innerHTML = `
                     <div class="flex items-start gap-4">
-                    <button>
+                    <button onclick="location.href='/profile/${message.username}'">
                         <div
-                            class="w-12 h-12 bg-center bg-cover rounded-full bg-[#f0f0f0] mt-1"
-                            style="background-image: url('#')">
+                            class="user-image w-12 h-12 bg-center bg-cover rounded-full bg-[#f0f0f0] mt-1"
+                            style="background-image: url('#')"
+                            data-user-id="${message.id}"
+                            data-user-name="${message.username}"
+                            >
                         </div>
                     </button>
                     <button>
@@ -244,6 +247,7 @@ document.addEventListener('DOMContentLoaded', () => {
         initializePage();
     }
 });
+
 
 document.addEventListener('DOMContentLoaded', () => {
     if (window.location.pathname === '/profile') {
