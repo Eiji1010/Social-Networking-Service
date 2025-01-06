@@ -180,6 +180,12 @@ return [
         return new RedirectRenderer('homepage', ['post' => $post]);
     })->setMiddleware(['auth']),
 
+    'user' => Route::create('/user?username=${username}', function(){
+        $username = $_GET['username'];
+
+        return new HTMLRenderer('page/profile', []);
+    })->setMiddleware(['auth']),
+
     "api/posts" => Route::create('/api/posts', function () {
         try {
             $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
