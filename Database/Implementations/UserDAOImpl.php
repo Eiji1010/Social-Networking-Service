@@ -143,4 +143,13 @@ class UserDAOImpl implements UserDAO
         $rawData = $mysqli->prepareAndFetchAll($query, $types, $params);
         return $rawData;
     }
+
+    public function getByUsername(mixed $username)
+    {
+        $mysqli = new MySQLWrapper();
+        $query = "SELECT * FROM users WHERE username = ?";
+        $rawData = $mysqli->prepareAndFetchAll($query, 's', [$username]);
+        if (empty($rawData)) return null;
+        return $this->rawDataToUser($rawData[0]);
+    }
 }

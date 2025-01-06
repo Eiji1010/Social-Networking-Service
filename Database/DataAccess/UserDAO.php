@@ -12,4 +12,5 @@ interface UserDAO
     public function updateProfile(array $data): bool;
     public function getAll(): array;
     public function getPosts(int $userId, ?int $offset, ?int $count): ?array;
+    public function getByUsername(mixed $username);
 }

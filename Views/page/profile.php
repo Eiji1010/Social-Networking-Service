@@ -1,7 +1,3 @@
-<?php
-    $user = \Helpers\Authenticate::getAuthenticatedUser();
-?>
-
 <!-- メインコンテンツ -->
 <main class="ml-80 flex-1 bg-white relative">
     <!-- プロフィールセクション -->
