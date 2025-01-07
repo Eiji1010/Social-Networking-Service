@@ -86,47 +86,46 @@ document.addEventListener('DOMContentLoaded', () => {
         let loading = false; // ロード中フラグ
         let scrollListenerAttached = false; // スクロールイベントがアタッチ済みか
 
-        // タイムラインデータの初期化
-        const initializeTimeline = () => {
-            trendingTimeline.innerHTML = ''; // trendingデータ初期化
-            followingTimeline.innerHTML = ''; // followingデータ初期化
-            trendingPage = 1;
-            followingPage = 1;
+        // キャッシュを sessionStorage から復元する
+        const cache = {
+            trending: JSON.parse(sessionStorage.getItem('trendingCache') || '{"data": [], "lastPage": 0}'),
+            following: JSON.parse(sessionStorage.getItem('followingCache') || '{"data": [], "lastPage": 0}'),
         };
 
-        // メッセージをロードする関数
-        const loadMessages = async (tab, page) => {
-            try {
-                const response = await fetch(`/api/posts?tab=${tab}&page=${page}`);
-                if (!response.ok) throw new Error('Failed to fetch messages.');
+        // タイムラインデータをレンダリングする関数
+        const renderTimeline = (tab) => {
+            const timeline = tab === 'trending' ? trendingTimeline : followingTimeline;
+            timeline.innerHTML = ''; // タイムラインをクリア
+            cache[tab].data.forEach((message) => {
+                const post = createPostElement(message);
+                timeline.appendChild(post);
+            });
+        };
 
-                const data = await response.json();
-                const timeline = tab === 'trending' ? trendingTimeline : followingTimeline;
-                console.log(data)
-                // データをHTMLに変換して追加
-                data.message.forEach((message) => {
-                    const post = document.createElement('article');
-                    post.className = 'flex flex-col gap-4 px-4';
-                    post.innerHTML = `
-                    <div class="flex items-start gap-4">
-                    <button onclick=location.href='/user?username=${message.username}'>
+        // 投稿を作成する関数
+        const createPostElement = (message) => {
+            const post = document.createElement('article');
+            post.className = 'flex flex-col gap-4 px-4';
+            post.innerHTML = `
+                <div class="flex items-start gap-4">
+                    <button onclick="location.href='/user?username=${message.username}'">
                         <div
                             class="user-image w-12 h-12 bg-center bg-cover rounded-full bg-[#f0f0f0] mt-1"
                             style="background-image: url('#')"
                             data-user-id="${message.id}"
                             data-user-name="${message.username}"
-                            >
-                        </div>
+                        ></div>
                     </button>
                     <button>
                         <div class="text-left">
                             <h3 class="text-sm font-bold mt-1">${message.username}</h3>
-                            <p class="text-sm text-[#60778a] ">
-                            ${message.content}
+                            <p class="text-sm text-[#60778a]">
+                                ${message.content}
                             </p>
                         </div>
-                    </div>
-                        <!-- アクションボタン -->
+                    </button>
+                </div>
+                                        <!-- アクションボタン -->
                         <div class="flex items-center justify-start gap-6 px-4">
                             <button
                                 type="button"
@@ -164,21 +163,38 @@ document.addEventListener('DOMContentLoaded', () => {
                                 <p class="text-[13px] font-bold">${message.commentCount}</p>
                             </button>
                         </div>
-                    </button>
-                    `;
+            `;
+            return post;
+        };
 
+        // APIからデータを取得する関数
+        const loadMessages = async (tab, page) => {
+            if (loading || page <= cache[tab].lastPage) return; // ロード中かキャッシュ済みのページなら取得しない
+
+            loading = true; // ロード中フラグを設定
+            try {
+                const response = await fetch(`/api/posts?tab=${tab}&page=${page}`);
+                if (!response.ok) throw new Error('Failed to fetch messages.');
+                const data = await response.json();
+
+                // キャッシュにデータを保存
+                cache[tab].data.push(...data.message);
+                cache[tab].lastPage = page;
+
+                // sessionStorage にキャッシュを保存
+                sessionStorage.setItem(`${tab}Cache`, JSON.stringify(cache[tab]));
+
+                // 新しいデータをレンダリング
+                const timeline = tab === 'trending' ? trendingTimeline : followingTimeline;
+                data.message.forEach((message) => {
+                    const post = createPostElement(message);
                     timeline.appendChild(post);
                 });
 
-                // 次のページがなければロードを停止
-                if (!data.hasMore) {
-                    console.log(`No more ${tab} messages to load.`);
-                }
-
-                loading = false; // ロード完了
             } catch (error) {
                 console.error(`Error loading ${tab} messages:`, error);
-                loading = false; // エラー時もフラグをリセット
+            } finally {
+                loading = false; // ロード完了
             }
         };
 
@@ -190,11 +206,12 @@ document.addEventListener('DOMContentLoaded', () => {
             const threshold = document.body.offsetHeight - 200; // ページ下部200px手前でロード
 
             if (scrollPosition >= threshold) {
-                loading = true; // ロード中
                 if (currentTab === 'trending') {
-                    loadMessages('trending', ++trendingPage);
+                    loadMessages('trending', trendingPage + 1);
+                    trendingPage += 1;
                 } else if (currentTab === 'following') {
-                    loadMessages('following', ++followingPage);
+                    loadMessages('following', followingPage + 1);
+                    followingPage += 1;
                 }
             }
         };
@@ -208,29 +225,28 @@ document.addEventListener('DOMContentLoaded', () => {
             if (tab === 'trending') {
                 trendingTimeline.classList.remove('hidden');
                 followingTimeline.classList.add('hidden');
-
-                // 初回ロードが必要なら
-                if (!trendingTimeline.hasChildNodes()) {
-                    loadMessages('trending', trendingPage);
+                renderTimeline('trending'); // キャッシュからレンダリング
+                if (cache.trending.lastPage === 0) {
+                    loadMessages('trending', 1);
+                    trendingPage = 1;
                 }
             } else if (tab === 'following') {
                 trendingTimeline.classList.add('hidden');
                 followingTimeline.classList.remove('hidden');
-
-                // 初回ロードが必要なら
-                if (!followingTimeline.hasChildNodes()) {
-                    loadMessages('following', followingPage);
+                renderTimeline('following'); // キャッシュからレンダリング
+                if (cache.following.lastPage === 0) {
+                    loadMessages('following', 1);
+                    followingPage = 1;
                 }
             }
         };
 
         // 初期化処理
         const initializePage = () => {
-            initializeTimeline(); // タイムライン初期化
-            currentTab = 'trending'; // デフォルトタブ
-            trendingTimeline.classList.remove('hidden');
-            followingTimeline.classList.add('hidden');
-            loadMessages('trending', trendingPage);
+            // デフォルトタブを設定
+            currentTab = 'trending';
+            renderTimeline('trending');
+            loadMessages('trending', 1);
         };
 
         // イベントリスナーを追加
