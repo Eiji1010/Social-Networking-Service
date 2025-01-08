@@ -269,4 +269,7 @@ return [
             return new JsonRenderer(['error' => $e->getMessage()], 500);
         }
     }),
+
+    'message' => Route::create('message', function(){
+    })->setMiddleware(['auth']),
 ];
