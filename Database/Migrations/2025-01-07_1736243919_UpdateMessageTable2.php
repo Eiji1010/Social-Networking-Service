@@ -8,7 +8,7 @@ class UpdateMessageTable2 implements SchemaMigration
     {
         return [
             "ALTER TABLE messages MODIFY COLUMN receiverId INT NOT NULL",
-            "ALTER TABLE messages MODIFY COLUMN content varchar(255) NOT NULL"
+            "ALTER TABLE messages MODIFY COLUMN content TEXT NOT NULL"
         ];
     }
 
@@ -16,7 +16,7 @@ class UpdateMessageTable2 implements SchemaMigration
     {
         return[
             "ALTER TABLE messages MODIFY COLUMN receiverId INT",
-            "ALTER TABLE messages MODIFY COLUMN content varchar(255)"
+            "ALTER TABLE messages MODIFY COLUMN content VARCHAR(255)"
         ];
     }
 }
