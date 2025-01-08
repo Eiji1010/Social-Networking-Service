@@ -5,6 +5,7 @@ namespace Database\Seeds;
 use Database\AbstractSeeder;
 use Database\DAOFactory;
 use Faker\Factory;
+use Helpers\Encrypt;
 
 class MessageSeeder extends AbstractSeeder
 {
@@ -38,13 +39,14 @@ class MessageSeeder extends AbstractSeeder
             $ids[] = $user->getId();
         }
         $senderIds = $ids;
-        $receiverIds = $ids + [null];
+        $receiverIds = $ids;
 
         $data = [];
         $faker = Factory::create();
         for ($i = 0; $i < $num; $i++){
+            $content = Encrypt::encrypt($faker->text);
             $data[] = [
-                'content' => $faker->text,
+                'content' => $content,
 //                'senderId' => $faker->randomElement($senderIds),
                 'senderId' => $faker->randomElement([1]),
                 'receiverId' => $faker->randomElement($receiverIds),
