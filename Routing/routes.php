@@ -271,5 +271,9 @@ return [
     }),
 
     'message' => Route::create('message', function(){
+        $messageDao = DAOFactory::getMessageDAO();
+        $messages = $messageDao->getBySenderId(Authenticate::getAuthenticatedUser()->getId(), 1, 10);
+
+        return new HTMLRenderer('page/message', ['messages' => $messages]);
     })->setMiddleware(['auth']),
 ];
